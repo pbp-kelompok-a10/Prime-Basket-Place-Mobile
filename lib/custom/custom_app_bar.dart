@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:prime_basket_place_mobile/custom/custom_drawer.dart';
 
 class CustomShopAppBar extends StatelessWidget implements PreferredSizeWidget {
   final VoidCallback? onMenuTap;
@@ -31,13 +32,14 @@ class CustomShopAppBar extends StatelessWidget implements PreferredSizeWidget {
       children: [
         /// MENU BTN
         Padding(
-          padding: const EdgeInsets.only(
-            left: 20,
-            right: 20,
-          ), // ⬅️ geser ke kanan
-          child: GestureDetector(
-            onTap: onMenuTap,
-            child: Icon(Icons.menu, color: primaryColor, size: 32),
+          padding: const EdgeInsets.only(left: 20, right: 20),
+          child: Builder(
+            builder: (ctx) {
+              return GestureDetector(
+                onTap: () => Scaffold.of(ctx).openDrawer(),
+                child: Icon(Icons.menu, color: primaryColor, size: 32),
+              );
+            },
           ),
         ),
 
