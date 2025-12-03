@@ -7,14 +7,13 @@ import 'package:prime_basket_place_mobile/detail-product/screens/edit_descriptio
 class ProductDetailPage extends StatefulWidget {
   final int productId; // ID produk yang diklik dari list
 
-  const ProductDetailPage({Key? key, required this.productId}) : super(key: key);
+  const ProductDetailPage({super.key, required this.productId});
 
   @override
   _ProductDetailPageState createState() => _ProductDetailPageState();
 }
 
 class _ProductDetailPageState extends State<ProductDetailPage> {
-  
   Future<List<ProductDetail>> fetchProductDetail(CookieRequest request) async {
     var response = await request.get(
       'https://rafsanjani41-primebasketplace.pbp.cs.ui.ac.id/detail/json/${widget.productId}/',
@@ -34,9 +33,7 @@ class _ProductDetailPageState extends State<ProductDetailPage> {
     final request = context.watch<CookieRequest>();
 
     return Scaffold(
-      appBar: AppBar(
-        title: const Text('Detail Produk'),
-      ),
+      appBar: AppBar(title: const Text('Detail Produk')),
       body: FutureBuilder(
         future: fetchProductDetail(request),
         builder: (context, AsyncSnapshot snapshot) {
@@ -56,8 +53,11 @@ class _ProductDetailPageState extends State<ProductDetailPage> {
                       width: double.infinity,
                       height: 300,
                       fit: BoxFit.cover,
-                      errorBuilder: (context, error, stackTrace) =>
-                          Container(height: 300, color: Colors.grey, child: const Center(child: Text("Gagal memuat gambar"))),
+                      errorBuilder: (context, error, stackTrace) => Container(
+                        height: 300,
+                        color: Colors.grey,
+                        child: const Center(child: Text("Gagal memuat gambar")),
+                      ),
                     ),
                     Padding(
                       padding: const EdgeInsets.all(16.0),
@@ -66,7 +66,10 @@ class _ProductDetailPageState extends State<ProductDetailPage> {
                         children: [
                           Text(
                             product.fields.name,
-                            style: const TextStyle(fontSize: 24, fontWeight: FontWeight.bold),
+                            style: const TextStyle(
+                              fontSize: 24,
+                              fontWeight: FontWeight.bold,
+                            ),
                           ),
                           const SizedBox(height: 8),
                           Text(
@@ -80,20 +83,28 @@ class _ProductDetailPageState extends State<ProductDetailPage> {
                           const SizedBox(height: 16),
                           Text(
                             "Rp ${product.fields.price}",
-                            style: const TextStyle(fontSize: 20, color: Colors.deepPurple, fontWeight: FontWeight.bold),
+                            style: const TextStyle(
+                              fontSize: 20,
+                              color: Colors.deepPurple,
+                              fontWeight: FontWeight.bold,
+                            ),
                           ),
                           const SizedBox(height: 24),
                           const Text(
                             "Deskripsi:",
-                            style: TextStyle(fontSize: 18, fontWeight: FontWeight.w600),
+                            style: TextStyle(
+                              fontSize: 18,
+                              fontWeight: FontWeight.w600,
+                            ),
                           ),
                           Text(
-                            product.fields.description ?? "Belum ada deskripsi.",
+                            product.fields.description ??
+                                "Belum ada deskripsi.",
                             style: const TextStyle(fontSize: 16),
                           ),
                           const SizedBox(height: 20),
-                          
-                          // Tombol Edit Deskripsi 
+
+                          // Tombol Edit Deskripsi
                           SizedBox(
                             width: double.infinity,
                             child: ElevatedButton(
@@ -101,12 +112,21 @@ class _ProductDetailPageState extends State<ProductDetailPage> {
                                 Navigator.push(
                                   context,
                                   MaterialPageRoute(
-                                    builder: (context) => EditDescriptionForm(productId: product.pk),
+                                    builder: (context) => EditDescriptionForm(
+                                      productId: product.pk,
+                                    ),
                                   ),
-                                ).then((_) => setState(() {})); // Refresh setelah kembali
+                                ).then(
+                                  (_) => setState(() {}),
+                                ); // Refresh setelah kembali
                               },
-                              style: ElevatedButton.styleFrom(backgroundColor: Colors.deepPurple),
-                              child: const Text("Edit Deskripsi", style: TextStyle(color: Colors.white)),
+                              style: ElevatedButton.styleFrom(
+                                backgroundColor: Colors.deepPurple,
+                              ),
+                              child: const Text(
+                                "Edit Deskripsi",
+                                style: TextStyle(color: Colors.white),
+                              ),
                             ),
                           ),
                         ],

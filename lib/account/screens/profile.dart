@@ -24,16 +24,16 @@ class ProfilePage extends StatelessWidget {
               child: Row(
                 children: [
                   Container(
-                    child: Icon(
-                      Icons.settings,
-                      color: Color(0xFF522E9B),
-                      size: 20,
-                    ),
                     decoration: BoxDecoration(
                       borderRadius: BorderRadius.circular(25),
                       color: Color(0x3B522E9B),
                     ),
                     padding: EdgeInsets.all(6),
+                    child: Icon(
+                      Icons.settings,
+                      color: Color(0xFF522E9B),
+                      size: 20,
+                    ),
                   ),
                   SizedBox(width: 19),
                   Container(
