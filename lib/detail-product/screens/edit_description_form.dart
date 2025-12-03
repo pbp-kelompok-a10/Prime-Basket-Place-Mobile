@@ -6,7 +6,7 @@ import 'package:provider/provider.dart';
 class EditDescriptionForm extends StatefulWidget {
   final int productId;
 
-  const EditDescriptionForm({Key? key, required this.productId}) : super(key: key);
+  const EditDescriptionForm({super.key, required this.productId});
 
   @override
   State<EditDescriptionForm> createState() => _EditDescriptionFormState();
@@ -21,9 +21,7 @@ class _EditDescriptionFormState extends State<EditDescriptionForm> {
     final request = context.watch<CookieRequest>();
 
     return Scaffold(
-      appBar: AppBar(
-        title: const Text('Edit Deskripsi'),
-      ),
+      appBar: AppBar(title: const Text('Edit Deskripsi')),
       body: Padding(
         padding: const EdgeInsets.all(16.0),
         child: Form(
@@ -55,7 +53,9 @@ class _EditDescriptionFormState extends State<EditDescriptionForm> {
               SizedBox(
                 width: double.infinity,
                 child: ElevatedButton(
-                  style: ElevatedButton.styleFrom(backgroundColor: Colors.deepPurple),
+                  style: ElevatedButton.styleFrom(
+                    backgroundColor: Colors.deepPurple,
+                  ),
                   onPressed: () async {
                     if (_formKey.currentState!.validate()) {
                       // Kirim data ke Django
@@ -67,14 +67,20 @@ class _EditDescriptionFormState extends State<EditDescriptionForm> {
                       );
 
                       if (response['status'] == 'success') {
-                        ScaffoldMessenger.of(context).showSnackBar(const SnackBar(
-                          content: Text("Deskripsi berhasil disimpan!"),
-                        ));
+                        ScaffoldMessenger.of(context).showSnackBar(
+                          const SnackBar(
+                            content: Text("Deskripsi berhasil disimpan!"),
+                          ),
+                        );
                         Navigator.pop(context); // Kembali ke halaman detail
                       } else {
-                        ScaffoldMessenger.of(context).showSnackBar(const SnackBar(
-                          content: Text("Terdapat kesalahan, silakan coba lagi."),
-                        ));
+                        ScaffoldMessenger.of(context).showSnackBar(
+                          const SnackBar(
+                            content: Text(
+                              "Terdapat kesalahan, silakan coba lagi.",
+                            ),
+                          ),
+                        );
                       }
                     }
                   },
