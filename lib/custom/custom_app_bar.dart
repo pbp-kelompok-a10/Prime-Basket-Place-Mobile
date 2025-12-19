@@ -1,5 +1,4 @@
 import 'package:flutter/material.dart';
-import 'package:prime_basket_place_mobile/custom/custom_drawer.dart';
 
 class CustomShopAppBar extends StatelessWidget implements PreferredSizeWidget {
   final VoidCallback? onMenuTap;
