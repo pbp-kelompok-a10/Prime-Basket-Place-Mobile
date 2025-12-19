@@ -1,25 +1,12 @@
 import 'package:flutter/material.dart';
+import 'package:prime_basket_place_mobile/account/screens/profile.dart';
+import 'package:prime_basket_place_mobile/homepage/screens/homepage.dart';
 
 class CustomShopAppBar extends StatelessWidget implements PreferredSizeWidget {
-  final VoidCallback? onMenuTap;
-  final VoidCallback? onLogoTap;
-  final Function(String)? onSearchChanged;
-  final Function(String)? onSearchSubmit;
-  final VoidCallback? onFavoriteTap;
-  final VoidCallback? onProfileTap;
-
-  final String? initialSearch;
   final Color backgroundColor;
   final Color primaryColor;
 
   const CustomShopAppBar({
-    this.onMenuTap,
-    this.onLogoTap,
-    this.onSearchChanged,
-    this.onFavoriteTap,
-    this.onProfileTap,
-    this.onSearchSubmit,
-    this.initialSearch,
     this.backgroundColor = const Color(0xFFE5E5E5),
     this.primaryColor = const Color(0xFF4C2FA0),
     super.key,
@@ -27,64 +14,86 @@ class CustomShopAppBar extends StatelessWidget implements PreferredSizeWidget {
 
   @override
   Widget build(BuildContext context) {
-    return Row(
-      children: [
-        /// MENU BTN
-        Padding(
-          padding: const EdgeInsets.only(left: 20, right: 20),
-          child: Builder(
-            builder: (ctx) {
-              return GestureDetector(
-                onTap: () => Scaffold.of(ctx).openDrawer(),
-                child: Icon(Icons.menu, color: primaryColor, size: 32),
-              );
-            },
-          ),
-        ),
-
-        /// BASKET LOGO
-        GestureDetector(
-          onTap: onLogoTap,
-          child: Image.asset("logo_ball.png", height: 32, fit: BoxFit.contain),
-        ),
-        const SizedBox(width: 20),
-
-        /// BRAND NAME
-        Column(
+    return Container(
+      color: backgroundColor,
+      child: SafeArea(
+        bottom: false,
+        child: Column(
+          mainAxisSize: MainAxisSize.min,
           children: [
-            const SizedBox(height: 18),
-            Image.asset(
-              "title_brand.png",
-              height: 32, // adjust to your UI
-              fit: BoxFit.contain,
+            const SizedBox(height: 8),
+            Row(
+              children: [
+                /// MENU BTN
+                Padding(
+                  padding: const EdgeInsets.symmetric(horizontal: 20),
+                  child: Builder(
+                    builder: (ctx) {
+                      return GestureDetector(
+                        onTap: () => Scaffold.of(ctx).openDrawer(),
+                        child: Icon(Icons.menu, color: primaryColor, size: 32),
+                      );
+                    },
+                  ),
+                ),
+
+                /// BASKET LOGO
+                GestureDetector(
+                  onTap: () {
+                    Navigator.push(
+                      context,
+                      MaterialPageRoute(builder: (_) => const Homepage()),
+                    );
+                  },
+                  child: Image.asset("logo_ball.png", height: 32),
+                ),
+
+                const SizedBox(width: 20),
+
+                /// BRAND NAME
+                Image.asset("title_brand.png", height: 32),
+
+                const Spacer(),
+
+                /// FAVORITE
+                IconButton(
+                  icon: Icon(
+                    Icons.favorite_border,
+                    color: primaryColor,
+                    size: 30,
+                  ),
+                  onPressed: () {
+                    // future: favorite page
+                  },
+                ),
+
+                /// PROFILE
+                Padding(
+                  padding: const EdgeInsets.only(right: 20),
+                  child: IconButton(
+                    icon: Icon(
+                      Icons.person_outline,
+                      color: primaryColor,
+                      size: 30,
+                    ),
+                    onPressed: () {
+                      Navigator.push(
+                        context,
+                        MaterialPageRoute(builder: (_) => const ProfilePage()),
+                      );
+                    },
+                  ),
+                ),
+              ],
             ),
+
+            const SizedBox(height: 8),
+
+            /// BOTTOM DIVIDER
+            Divider(height: 1, thickness: 2, color: primaryColor),
           ],
         ),
-        const SizedBox(width: 20),
-
-        Spacer(),
-
-        // nanti ubah ke != null pas udah ada fungsinya.
-
-        /// FAVORITE (optional)
-        if (onFavoriteTap == null)
-          GestureDetector(
-            onTap: onFavoriteTap,
-            child: Icon(Icons.favorite_border, color: primaryColor, size: 30),
-          ),
-
-        if (onFavoriteTap == null) const SizedBox(width: 24),
-
-        /// PROFILE (optional)
-        if (onProfileTap == null)
-          Padding(
-            padding: const EdgeInsets.only(right: 20), // ⬅️ geser kiri
-            child: GestureDetector(
-              onTap: onProfileTap,
-              child: Icon(Icons.person_outline, color: primaryColor, size: 30),
-            ),
-          ),
-      ],
+      ),
     );
   }
 
