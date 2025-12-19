@@ -18,7 +18,7 @@ class _HomepageState extends State<Homepage> {
   Future<List<Product>> fetchProduct(CookieRequest request) async {
     // GANTI URL INI dengan URL PWS Anda atau http://10.0.2.2:8000/json/ jika di emulator
     var response = await request.get(
-      'https://rafsanjani41-primebasketplace.pbp.cs.ui.ac.id/json/', 
+      'https://rafsanjani41-primebasketplace.pbp.cs.ui.ac.id/json/',
     );
 
     List<Product> listProduct = [];
@@ -36,7 +36,7 @@ class _HomepageState extends State<Homepage> {
 
     return Scaffold(
       appBar: const CustomShopAppBar(), // Menggunakan AppBar custom Anda
-      drawer: const LeftDrawer(),       // Menggunakan Drawer custom Anda
+      drawer: const LeftDrawer(), // Menggunakan Drawer custom Anda
       body: FutureBuilder(
         future: fetchProduct(request),
         builder: (context, AsyncSnapshot snapshot) {
@@ -63,18 +63,17 @@ class _HomepageState extends State<Homepage> {
                 itemCount: snapshot.data!.length,
                 itemBuilder: (_, index) {
                   var product = snapshot.data![index];
-                  
+
                   return InkWell(
                     onTap: () {
-                        // Navigasi ke detail product
-                        Navigator.push(
-                          context,
-                          MaterialPageRoute(
-                            builder: (context) => ProductDetailPage(
-                              productId: product.pk,
-                            ),
-                          ),
-                        );
+                      // Navigasi ke detail product
+                      Navigator.push(
+                        context,
+                        MaterialPageRoute(
+                          builder: (context) =>
+                              ProductDetailPage(productId: product.pk),
+                        ),
+                      );
                     },
                     child: Card(
                       child: Column(

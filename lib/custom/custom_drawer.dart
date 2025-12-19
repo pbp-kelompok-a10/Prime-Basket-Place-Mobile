@@ -1,4 +1,7 @@
 import 'package:flutter/material.dart';
+import 'package:prime_basket_place_mobile/dashboard/screens/dashboard_screen.dart';
+import 'package:prime_basket_place_mobile/homepage/screens/homepage.dart';
+import 'package:prime_basket_place_mobile/account/screens/profile.dart';
 
 class LeftDrawer extends StatelessWidget {
   const LeftDrawer({super.key});
@@ -53,17 +56,32 @@ class LeftDrawer extends StatelessWidget {
               _DrawerItem(
                 icon: Icons.home_outlined,
                 label: "Home",
-                onTap: () => _goTo(context),
+                onTap: () {
+                  Navigator.push(
+                    context,
+                    MaterialPageRoute(builder: (_) => const Homepage()),
+                  );
+                },
               ),
               _DrawerItem(
                 icon: Icons.person_outline,
                 label: "Profile",
-                onTap: () => _goTo(context),
+                onTap: () {
+                  Navigator.push(
+                    context,
+                    MaterialPageRoute(builder: (_) => const ProfilePage()),
+                  );
+                },
               ),
               _DrawerItem(
                 icon: Icons.view_in_ar_outlined,
                 label: "Dashboard",
-                onTap: () => _goTo(context),
+                onTap: () {
+                  Navigator.push(
+                    context,
+                    MaterialPageRoute(builder: (_) => const DashboardPage()),
+                  );
+                },
               ),
               _DrawerItem(
                 icon: Icons.add_circle_outline,
