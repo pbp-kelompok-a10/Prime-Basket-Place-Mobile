@@ -21,11 +21,12 @@ class _LoginPageState extends State<LoginPage> {
 
     return Scaffold(
       appBar: AppBar(title: const Text('Sign in')),
-      backgroundColor: const Color(0xFFF0F0F0),
+      backgroundColor: Color (0xFFF0F0F0),
       body: Center(
         child: SingleChildScrollView(
           padding: const EdgeInsets.all(16.0),
           child: Card(
+            color: Colors.white,
             elevation: 8,
             shape: RoundedRectangleBorder(
               borderRadius: BorderRadius.circular(12.0),
