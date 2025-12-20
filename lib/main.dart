@@ -24,7 +24,7 @@ class MyApp extends StatelessWidget {
         debugShowCheckedModeBanner: false,
         title: 'Prime Basket Place',
         theme: ThemeData(primarySwatch: Colors.purple),
-        home: const DashboardPage(),
+        home: const LoginPage(),
       ),
     );
   }

@@ -171,7 +171,7 @@ class _LoginPageState extends State<LoginPage> {
                     child: const Text('Login'),
                   ),
                   const SizedBox(height: 36.0),
-                  
+
                   GestureDetector(
                     onTap: () {
                       Navigator.push(
@@ -186,9 +186,7 @@ class _LoginPageState extends State<LoginPage> {
                       children: [
                         Text(
                           'Don\'t have an account?',
-                          style: TextStyle(
-                            fontSize: 16.0,
-                          ),
+                          style: TextStyle(fontSize: 16.0),
                         ),
                         Text(
                           ' Register',
