@@ -1,8 +1,12 @@
+import 'package:prime_basket_place_mobile/account/account_provider.dart';
+import 'package:prime_basket_place_mobile/account/model/account_entry.dart';
 import 'package:prime_basket_place_mobile/account/screens/profile.dart';
 import 'package:flutter/material.dart';
 import 'package:pbp_django_auth/pbp_django_auth.dart';
 import 'package:prime_basket_place_mobile/account/screens/register.dart';
 import 'package:provider/provider.dart';
+import 'package:prime_basket_place_mobile/custom/custom_app_bar.dart';
+
 
 class LoginPage extends StatefulWidget {
   const LoginPage({super.key});
@@ -20,7 +24,11 @@ class _LoginPageState extends State<LoginPage> {
     final request = context.watch<CookieRequest>();
 
     return Scaffold(
-      appBar: AppBar(title: const Text('Sign in')),
+      appBar: CustomShopAppBar(
+        onLogoTap: () {
+          Navigator.popUntil(context, (route) => route.isFirst);
+        },
+      ),
       backgroundColor: Color (0xFFF0F0F0),
       body: Center(
         child: SingleChildScrollView(
@@ -103,14 +111,17 @@ class _LoginPageState extends State<LoginPage> {
                       // TODO: Change the URL and don't forget to add trailing slash (/) at the end of URL!
                       // To connect Android emulator with Django on localhost, use URL http://10.0.2.2/
                       // If you using chrome,  use URL http://localhost:8000
+                      // "https://rafsanjani41-primebasketplace.pbp.cs.ui.ac.id/auth/login/",
                       final response = await request.login(
-                        "http://localhost:8000/auth/login/",
+                        "https://rafsanjani41-primebasketplace.pbp.cs.ui.ac.id/auth/login/",
                         {'username': username, 'password': password},
                       );
 
                       if (request.loggedIn) {
                         String message = response['message'];
                         String uname = response['username'];
+                        final account = UserAccount.fromLoginJson(response);
+                        context.read<AccountProvider>().setAccount(account);
                         if (context.mounted) {
                           Navigator.pushReplacement(
                             context,
