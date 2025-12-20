@@ -20,7 +20,7 @@ class MyApp extends StatelessWidget {
       child: MaterialApp(
         title: 'Prime Basket Place',
         theme: ThemeData(primarySwatch: Colors.purple),
-        home: const DashboardPage(),
+        home: const LoginPage(),
       ),
     );
   }

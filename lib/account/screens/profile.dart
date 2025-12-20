@@ -1,4 +1,6 @@
 import 'package:flutter/material.dart';
+import 'package:prime_basket_place_mobile/custom/custom_app_bar.dart';
+import 'package:prime_basket_place_mobile/custom/custom_drawer.dart';
 
 class ProfilePage extends StatelessWidget {
   const ProfilePage({super.key});
@@ -7,7 +9,8 @@ class ProfilePage extends StatelessWidget {
   Widget build(BuildContext context) {
     return Scaffold(
       backgroundColor: const Color(0xFFF0F0F0),
-
+      appBar: const CustomShopAppBar(),
+      drawer: const LeftDrawer(),
       body: SingleChildScrollView(
         // Bungkus semua konten di dalam Column
         child: Column(

@@ -21,7 +21,7 @@ class _LoginPageState extends State<LoginPage> {
 
     return Scaffold(
       appBar: AppBar(title: const Text('Sign in')),
-      backgroundColor: Color (0xFFF0F0F0),
+      backgroundColor: Color(0xFFF0F0F0),
       body: Center(
         child: SingleChildScrollView(
           padding: const EdgeInsets.all(16.0),
@@ -160,7 +160,7 @@ class _LoginPageState extends State<LoginPage> {
                     child: const Text('Login'),
                   ),
                   const SizedBox(height: 36.0),
-                  
+
                   GestureDetector(
                     onTap: () {
                       Navigator.push(
@@ -175,9 +175,7 @@ class _LoginPageState extends State<LoginPage> {
                       children: [
                         Text(
                           'Don\'t have an account?',
-                          style: TextStyle(
-                            fontSize: 16.0,
-                          ),
+                          style: TextStyle(fontSize: 16.0),
                         ),
                         Text(
                           ' Register',
