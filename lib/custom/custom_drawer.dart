@@ -84,11 +84,6 @@ class LeftDrawer extends StatelessWidget {
                 },
               ),
               _DrawerItem(
-                icon: Icons.add_circle_outline,
-                label: "Add Product",
-                onTap: () => _goTo(context),
-              ),
-              _DrawerItem(
                 icon: Icons.info_outline,
                 label: "About Us",
                 onTap: () => _goTo(context),

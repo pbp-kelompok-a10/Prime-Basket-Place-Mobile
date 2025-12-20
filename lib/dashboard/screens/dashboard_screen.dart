@@ -2,7 +2,9 @@ import 'package:flutter/material.dart';
 import 'package:prime_basket_place_mobile/custom/custom_app_bar.dart';
 import 'package:prime_basket_place_mobile/custom/custom_drawer.dart';
 import 'package:prime_basket_place_mobile/dashboard/widgets/product_card.dart';
+import 'package:prime_basket_place_mobile/dashboard/screens/add_product_form.dart';
 import 'package:prime_basket_place_mobile/models/product.dart';
+import 'package:prime_basket_place_mobile/detail-product/screens/product_detail_page.dart';
 import 'package:provider/provider.dart';
 import 'package:pbp_django_auth/pbp_django_auth.dart';
 
@@ -15,7 +17,9 @@ class DashboardPage extends StatefulWidget {
 
 class _DashboardPageState extends State<DashboardPage> {
   Future<List<Product>> fetchNews(CookieRequest request) async {
-    final response = await request.get('http://localhost:8000/dashboard/json/');
+    final response = await request.get(
+      'https://rafsanjani41-primebasketplace.pbp.cs.ui.ac.id/dashboard/json/',
+    );
 
     // Decode response to json format
     var data = response;
@@ -89,7 +93,13 @@ class _DashboardPageState extends State<DashboardPage> {
                   return ProductCard(
                     product: product,
                     onTap: () {
-                      // nanti ke detail product
+                      Navigator.push(
+                        context,
+                        MaterialPageRoute(
+                          builder: (context) =>
+                              ProductDetailPage(productId: product.pk),
+                        ),
+                      );
                     },
                   );
                 },
@@ -104,6 +114,11 @@ class _DashboardPageState extends State<DashboardPage> {
           ScaffoldMessenger.of(
             context,
           ).showSnackBar(const SnackBar(content: Text('Button pressed!')));
+          // Navigate to form
+          Navigator.push(
+            context,
+            MaterialPageRoute(builder: (context) => AddProductFormPage()),
+          );
         },
         backgroundColor: Color(0xFF4C2FA0),
         foregroundColor: Colors.white,
