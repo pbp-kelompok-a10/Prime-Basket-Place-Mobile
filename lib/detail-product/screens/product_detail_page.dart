@@ -3,6 +3,7 @@ import 'package:pbp_django_auth/pbp_django_auth.dart';
 import 'package:provider/provider.dart';
 import 'package:prime_basket_place_mobile/detail-product/models/product_detail.dart';
 import 'package:prime_basket_place_mobile/detail-product/screens/edit_description_form.dart';
+import 'package:prime_basket_place_mobile/review/widgets/review_button.dart';
 
 class ProductDetailPage extends StatefulWidget {
   final int productId; // ID produk yang diklik dari list
@@ -127,6 +128,16 @@ class _ProductDetailPageState extends State<ProductDetailPage> {
                                 "Edit Deskripsi",
                                 style: TextStyle(color: Colors.white),
                               ),
+                            ),
+                          ),
+
+                          const SizedBox(height: 12),
+
+                          SizedBox(
+                            width: double.infinity,
+                            child: ReviewProductButton(
+                              productId: product.pk.toString(),
+                              productName: product.fields.name,
                             ),
                           ),
                         ],
