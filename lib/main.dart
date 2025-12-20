@@ -1,24 +1,26 @@
 import 'package:flutter/material.dart';
-import 'package:prime_basket_place_mobile/custom/custom_app_bar.dart';
-import 'package:prime_basket_place_mobile/custom/custom_drawer.dart';
-import 'review/screens/review_list_screen.dart';
+import 'package:prime_basket_place_mobile/account/screens/login.dart';
+import 'package:prime_basket_place_mobile/dashboard/screens/dashboard_screen.dart';
+import 'package:prime_basket_place_mobile/homepage/screens/homepage.dart';
+import 'package:pbp_django_auth/pbp_django_auth.dart';
+import 'package:provider/provider.dart';
 
 void main() {
   runApp(const MyApp());
 }
 
 class MyApp extends StatelessWidget {
-  const MyApp({Key? key}) : super(key: key);
+  const MyApp({super.key});
 
+  // This widget is the root of your application.
   @override
   Widget build(BuildContext context) {
-    return MaterialApp(
-      title: 'Prime Basket Place',
-      debugShowCheckedModeBanner: false, // Hilangkan banner debug
-      theme: ThemeData(primarySwatch: Colors.deepPurple, fontFamily: 'Roboto'),
-      home: const ReviewListScreen(
-        productId: 'test-product-123', // ID produk untuk testing
-        productName: 'Sample Product', // Nama produk untuk testing
+    return Provider(
+      create: (_) => CookieRequest(),
+      child: MaterialApp(
+        title: 'Prime Basket Place',
+        theme: ThemeData(primarySwatch: Colors.purple),
+        home: const DashboardPage(),
       ),
     );
   }
