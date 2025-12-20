@@ -3,14 +3,15 @@ import 'package:http/http.dart' as http;
 import '../models/review_model.dart';
 
 class ReviewService {
-  // Ganti dengan URL Django backend Anda
-  static const String baseUrl = 'http://localhost:8000/api';
+  // ← UBAH URL INI sesuai Django backend Anda
+  static const String baseUrl =
+      'https://rafsanjani41-primebasketplace.pbp.cs.ui.ac.id';
 
   // Get all reviews for a product
   static Future<List<Review>> getReviews(String productId) async {
     try {
       final response = await http.get(
-        Uri.parse('$baseUrl/products/$productId/reviews/'),
+        Uri.parse('$baseUrl/reviews/json/$productId/'),
       );
 
       if (response.statusCode == 200) {
@@ -28,7 +29,7 @@ class ReviewService {
   static Future<ReviewStats> getReviewStats(String productId) async {
     try {
       final response = await http.get(
-        Uri.parse('$baseUrl/products/$productId/reviews/stats/'),
+        Uri.parse('$baseUrl/reviews/json/$productId/stats/'),
       );
 
       if (response.statusCode == 200) {
@@ -50,11 +51,11 @@ class ReviewService {
   }) async {
     try {
       final response = await http.post(
-        Uri.parse('$baseUrl/products/$productId/reviews/'),
+        Uri.parse('$baseUrl/reviews/create-flutter/$productId/'),
         headers: {
           'Content-Type': 'application/json',
           // Tambahkan authentication header jika diperlukan
-          // 'Authorization': 'Bearer $token',
+          // 'Cookie': 'sessionid=your_session_id',
         },
         body: json.encode({
           'rating': rating,
@@ -63,7 +64,12 @@ class ReviewService {
         }),
       );
 
-      return response.statusCode == 201 || response.statusCode == 200;
+      if (response.statusCode == 201 || response.statusCode == 200) {
+        return true;
+      } else {
+        final responseData = json.decode(response.body);
+        throw Exception(responseData['message'] ?? 'Failed to submit review');
+      }
     } catch (e) {
       throw Exception('Error submitting review: $e');
     }
