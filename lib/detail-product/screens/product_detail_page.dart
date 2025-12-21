@@ -17,7 +17,7 @@ class ProductDetailPage extends StatefulWidget {
 class _ProductDetailPageState extends State<ProductDetailPage> {
   Future<List<ProductDetail>> fetchProductDetail(CookieRequest request) async {
     var response = await request.get(
-      'https://rafsanjani41-primebasketplace.pbp.cs.ui.ac.id/detail/json/${widget.productId}/detail-json',
+      'https://rafsanjani41-primebasketplace.pbp.cs.ui.ac.id/detail/product/${widget.productId}/detail-json/',
     );
 
     List<ProductDetail> listProduct = [];
@@ -34,7 +34,11 @@ class _ProductDetailPageState extends State<ProductDetailPage> {
     final request = context.watch<CookieRequest>();
 
     return Scaffold(
-      appBar: AppBar(title: const Text('Detail Produk')),
+      backgroundColor: Color(0xFFF0F0F0),
+      appBar: AppBar(
+        title: const Text('Detail Produk'),
+        backgroundColor: Color(0xFFF0F0F0),
+      ),
       body: FutureBuilder(
         future: fetchProductDetail(request),
         builder: (context, AsyncSnapshot snapshot) {

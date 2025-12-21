@@ -38,7 +38,7 @@ class _DashboardPageState extends State<DashboardPage> {
   Widget build(BuildContext context) {
     final request = context.watch<CookieRequest>();
     return Scaffold(
-      backgroundColor: Color.fromARGB(255, 229, 229, 229),
+      backgroundColor: Color(0xFFF0F0F0),
       appBar: const CustomShopAppBar(),
       drawer: const LeftDrawer(),
       body: ListView(
