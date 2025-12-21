@@ -18,7 +18,7 @@ class DashboardPage extends StatefulWidget {
 class _DashboardPageState extends State<DashboardPage> {
   Future<List<Product>> fetchNews(CookieRequest request) async {
     final response = await request.get(
-      'https://localhost:8000/dashboard/json/',
+      'https://rafsanjani41-primebasketplace.pbp.cs.ui.ac.id/dashboard/json/',
     );
 
     // Decode response to json format

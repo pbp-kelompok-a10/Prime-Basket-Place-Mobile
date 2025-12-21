@@ -17,7 +17,7 @@ class _HomepageState extends State<Homepage> {
   // Fungsi untuk mengambil data dari Django
   Future<List<Product>> fetchProduct(CookieRequest request) async {
     // GANTI URL INI dengan URL PWS Anda atau http://10.0.2.2:8000/json/ jika di emulator
-    var response = await request.get('https://localhost:8000/json/');
+    var response = await request.get('https://rafsanjani41-primebasketplace.pbp.cs.ui.ac.id/json/');
 
     List<Product> listProduct = [];
     for (var d in response) {

@@ -60,7 +60,7 @@ class _EditDescriptionFormState extends State<EditDescriptionForm> {
                     if (_formKey.currentState!.validate()) {
                       // Kirim data ke Django
                       final response = await request.postJson(
-                        "https://localhost:8000/detail/edit-flutter/${widget.productId}/update-flutter/",
+                        "https://rafsanjani41-primebasketplace.pbp.cs.ui.ac.id/detail/edit-flutter/${widget.productId}/update-flutter/",
                         jsonEncode(<String, String>{
                           'description': _description,
                         }),

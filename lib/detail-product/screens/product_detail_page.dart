@@ -17,7 +17,7 @@ class ProductDetailPage extends StatefulWidget {
 class _ProductDetailPageState extends State<ProductDetailPage> {
   Future<List<ProductDetail>> fetchProductDetail(CookieRequest request) async {
     var response = await request.get(
-      'http://localhost:8000/detail/json/${widget.productId}/detail-json',
+      'https://rafsanjani41-primebasketplace.pbp.cs.ui.ac.id/detail/json/${widget.productId}/detail-json',
     );
 
     List<ProductDetail> listProduct = [];
