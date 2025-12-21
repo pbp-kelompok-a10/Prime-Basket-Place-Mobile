@@ -3,6 +3,7 @@ import 'package:flutter/material.dart';
 import 'package:prime_basket_place_mobile/account/screens/login.dart';
 import 'package:pbp_django_auth/pbp_django_auth.dart';
 import 'package:provider/provider.dart';
+import 'package:prime_basket_place_mobile/custom/custom_app_bar.dart';
 
 class RegisterPage extends StatefulWidget {
   const RegisterPage({super.key});
@@ -20,15 +21,11 @@ class _RegisterPageState extends State<RegisterPage> {
   Widget build(BuildContext context) {
     final request = context.watch<CookieRequest>();
     return Scaffold(
-      backgroundColor: Colors.white,
-      appBar: AppBar(
-        title: const Text('Register'),
-        leading: IconButton(
-          icon: const Icon(Icons.arrow_back),
-          onPressed: () {
-            Navigator.pop(context);
-          },
-        ),
+      backgroundColor: Color (0xFFF0F0F0),
+      appBar: CustomShopAppBar(
+        onLogoTap: () {
+          Navigator.popUntil(context, (route) => route.isFirst);
+        },
       ),
       body: Center(
         child: SingleChildScrollView(
@@ -154,7 +151,7 @@ class _RegisterPageState extends State<RegisterPage> {
                       // To connect Android emulator with Django on localhost, use URL http://10.0.2.2/
                       // If you using chrome,  use URL http://localhost:8000
                       final response = await request.postJson(
-                        "http://localhost:8000/auth/register/",
+                      "https://rafsanjani41-primebasketplace.pbp.cs.ui.ac.id/auth/register/",
                         jsonEncode({
                           "username": username,
                           "password1": password1,
@@ -193,6 +190,32 @@ class _RegisterPageState extends State<RegisterPage> {
                       ),
                     ),
                     child: const Text('Register'),
+                  ),
+                  Container(
+                    margin: const EdgeInsets.only(top: 16.0),
+                    child: Row(
+                      mainAxisAlignment: MainAxisAlignment.center,
+                      children: <Widget>[
+                        const Text('Already have an account? '),
+                        GestureDetector(
+                          onTap: () {
+                            Navigator.pushReplacement(
+                              context,
+                              MaterialPageRoute(
+                                builder: (context) => const LoginPage(),
+                              ),
+                            );
+                          },
+                          child: Text(
+                            'Sign in',
+                            style: TextStyle(
+                              color: Theme.of(context).colorScheme.primary,
+                              fontWeight: FontWeight.bold,
+                            ),
+                          ),
+                        ),
+                      ],
+                    ),
                   ),
                 ],
               ),
