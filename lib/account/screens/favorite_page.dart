@@ -24,7 +24,8 @@ class _FavoritePageState extends State<FavoritePage> {
     CookieRequest request,
     List<int> userFavoriteIds,
   ) async {
-    const String baseUrl = "http://localhost:8000";
+    const String baseUrl =
+        "https://rafsanjani41-primebasketplace.pbp.cs.ui.ac.id";
 
     // 1. Ambil SEMUA data produk
     final response = await request.get('$baseUrl/json/');
