@@ -74,11 +74,7 @@ class _ProfilePageState extends State<ProfilePage> {
           handleProfileRouting(context, index);
         },
       ),
-      appBar: CustomShopAppBar(
-        onLogoTap: () {
-          Navigator.popUntil(context, (route) => route.isFirst);
-        },
-      ),
+      appBar: CustomShopAppBar(),
       body: SingleChildScrollView(
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,

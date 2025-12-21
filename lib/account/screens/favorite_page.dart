@@ -41,11 +41,7 @@ class FavoritePage extends StatelessWidget {
         onItemSelected: (index) => handleProfileRouting(context, index),
       ),
 
-      appBar: CustomShopAppBar(
-        onLogoTap: () {
-          Navigator.popUntil(context, (route) => route.isFirst);
-        },
-      ),
+      appBar: CustomShopAppBar(),
 
       body: Column(
         crossAxisAlignment: CrossAxisAlignment.start,

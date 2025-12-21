@@ -35,6 +35,7 @@ class _HomepageState extends State<Homepage> {
     final request = context.watch<CookieRequest>();
 
     return Scaffold(
+      backgroundColor: Color(0xFFF0F0F0),
       appBar: const CustomShopAppBar(), // Menggunakan AppBar custom Anda
       drawer: const LeftDrawer(), // Menggunakan Drawer custom Anda
       body: FutureBuilder(
@@ -81,7 +82,7 @@ class _HomepageState extends State<Homepage> {
                         children: [
                           Expanded(
                             child: Image.network(
-                              product.fields.imageUrl,
+                              'https://rafsanjani41-primebasketplace.pbp.cs.ui.ac.id/dashboard/proxy-image/?url=${Uri.encodeComponent(product.fields.imageUrl)}',
                               fit: BoxFit.cover,
                               width: double.infinity,
                               errorBuilder: (ctx, error, stackTrace) =>
