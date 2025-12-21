@@ -11,7 +11,7 @@ import 'package:prime_basket_place_mobile/custom/custom_drawer.dart';
 class ManageUserPage extends StatefulWidget {
   const ManageUserPage({super.key});
 
-  static const String baseUrl = "https://rafsanjani41-primebasketplace.pbp.cs.ui.ac.id/";
+  static const String baseUrl = "http://localhost:8000/";
 
   @override
   State<ManageUserPage> createState() => _ManageUserPageState();
@@ -54,11 +54,7 @@ class _ManageUserPageState extends State<ManageUserPage> {
 
     return Scaffold(
       backgroundColor: const Color(0xFFF0F0F0),
-      appBar: CustomShopAppBar(
-        onLogoTap: () {
-          Navigator.popUntil(context, (route) => route.isFirst);
-        },
-      ),
+      appBar: CustomShopAppBar(),
       drawer: const LeftDrawer(),
       endDrawer: ProfileDrawer(
         selectedIndex: 0,

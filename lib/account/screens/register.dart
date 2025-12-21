@@ -21,12 +21,8 @@ class _RegisterPageState extends State<RegisterPage> {
   Widget build(BuildContext context) {
     final request = context.watch<CookieRequest>();
     return Scaffold(
-      backgroundColor: Color (0xFFF0F0F0),
-      appBar: CustomShopAppBar(
-        onLogoTap: () {
-          Navigator.popUntil(context, (route) => route.isFirst);
-        },
-      ),
+      backgroundColor: Color(0xFFF0F0F0),
+      appBar: CustomShopAppBar(),
       body: Center(
         child: SingleChildScrollView(
           padding: const EdgeInsets.all(16.0),
@@ -151,7 +147,7 @@ class _RegisterPageState extends State<RegisterPage> {
                       // To connect Android emulator with Django on localhost, use URL http://10.0.2.2/
                       // If you using chrome,  use URL http://localhost:8000
                       final response = await request.postJson(
-                      "https://rafsanjani41-primebasketplace.pbp.cs.ui.ac.id/auth/register/",
+                        "http://localhost:8000/auth/register/",
                         jsonEncode({
                           "username": username,
                           "password1": password1,

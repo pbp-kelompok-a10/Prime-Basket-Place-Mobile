@@ -74,11 +74,7 @@ class _ProfilePageState extends State<ProfilePage> {
           handleProfileRouting(context, index);
         },
       ),
-      appBar: CustomShopAppBar(
-        onLogoTap: () {
-          Navigator.popUntil(context, (route) => route.isFirst);
-        },
-      ),
+      appBar: CustomShopAppBar(),
       body: SingleChildScrollView(
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
@@ -158,7 +154,7 @@ class _ProfilePageState extends State<ProfilePage> {
     final imageUrl = account.fields.profilePicture;
 
     final proxyUrl = (imageUrl != null && imageUrl.isNotEmpty)
-        ? 'https://rafsanjani41-primebasketplace.pbp.cs.ui.ac.id/proxy-image/?url=${Uri.encodeComponent(imageUrl)}'
+        ? 'http://localhost:8000/proxy-image/?url=${Uri.encodeComponent(imageUrl)}'
         : null;
 
     return Container(
