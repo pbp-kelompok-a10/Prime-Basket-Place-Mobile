@@ -38,7 +38,7 @@ class _PasswordPageState extends State<PasswordPage> {
   Future<void> _saveChanges(CookieRequest request) async {
     setState(() => _isLoading = true);
     const String baseUrl =
-        "https://rafsanjani41-primebasketplace.pbp.cs.ui.ac.id";
+        "https://rafsanjani41-primebasketplace.pbp.cs.ui.ac.id"; 
 
     try {
       final response = await request.post("$baseUrl/auth/change-password/", {

@@ -6,8 +6,7 @@ import 'package:prime_basket_place_mobile/account/model/account_entry.dart';
 class AccountProvider extends ChangeNotifier {
   UserAccount? account;
 
-  final String baseUrl =
-      'https://rafsanjani41-primebasketplace.pbp.cs.ui.ac.id';
+  final String baseUrl = 'https://rafsanjani41-primebasketplace.pbp.cs.ui.ac.id';
 
   Future<bool> logout() async {
     final url = Uri.parse('$baseUrl/auth/logout/');
