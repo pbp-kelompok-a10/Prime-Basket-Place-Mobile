@@ -11,7 +11,8 @@ import 'package:prime_basket_place_mobile/custom/custom_drawer.dart';
 class ManageUserPage extends StatefulWidget {
   const ManageUserPage({super.key});
 
-  static const String baseUrl = "https://rafsanjani41-primebasketplace.pbp.cs.ui.ac.id";
+  static const String baseUrl =
+      "https://rafsanjani41-primebasketplace.pbp.cs.ui.ac.id";
 
   @override
   State<ManageUserPage> createState() => _ManageUserPageState();

@@ -4,6 +4,9 @@ import 'package:provider/provider.dart';
 import 'package:prime_basket_place_mobile/detail-product/models/product_detail.dart';
 import 'package:prime_basket_place_mobile/detail-product/screens/edit_description_form.dart';
 import 'package:prime_basket_place_mobile/review/widgets/review_button.dart';
+import 'package:prime_basket_place_mobile/custom/custom_elevated_button.dart';
+import 'package:prime_basket_place_mobile/models/product.dart';
+import 'package:prime_basket_place_mobile/dashboard/widgets/favorite_button.dart';
 
 class ProductDetailPage extends StatefulWidget {
   final int productId; // ID produk yang diklik dari list
@@ -15,14 +18,14 @@ class ProductDetailPage extends StatefulWidget {
 }
 
 class _ProductDetailPageState extends State<ProductDetailPage> {
-  Future<List<ProductDetail>> fetchProductDetail(CookieRequest request) async {
+  Future<List<Product>> fetchProductDetail(CookieRequest request) async {
     try {
       var response = await request.get(
         'https://rafsanjani41-primebasketplace.pbp.cs.ui.ac.id/detail/product/${widget.productId}/detail-json/',
       );
 
-      List<ProductDetail> listProduct = [];
-      
+      List<Product> listProduct = [];
+
       // Handle null response
       if (response == null) {
         throw Exception('Response adalah null');
@@ -32,14 +35,16 @@ class _ProductDetailPageState extends State<ProductDetailPage> {
       if (response is List) {
         for (var d in response) {
           if (d != null) {
-            listProduct.add(ProductDetail.fromJson(d));
+            listProduct.add(Product.fromJson(d));
           }
         }
       } else if (response is Map) {
         // Jika response adalah single object, tambahkan ke list
-        listProduct.add(ProductDetail.fromJson(Map<String, dynamic>.from(response)));
+        listProduct.add(Product.fromJson(Map<String, dynamic>.from(response)));
       } else {
-        throw Exception('Format response tidak dikenali: ${response.runtimeType}');
+        throw Exception(
+          'Format response tidak dikenali: ${response.runtimeType}',
+        );
       }
 
       return listProduct;
@@ -96,114 +101,132 @@ class _ProductDetailPageState extends State<ProductDetailPage> {
 
           // Check if data is null atau empty
           if (snapshot.data == null || snapshot.data!.isEmpty) {
-            return const Center(
-              child: Text("Data produk tidak ditemukan."),
-            );
+            return const Center(child: Text("Data produk tidak ditemukan."));
           }
 
           // Success state
-          ProductDetail product = snapshot.data![0]; // Ambil item pertama
+          Product product = snapshot.data![0]; // Ambil item pertama
           return SingleChildScrollView(
-                child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    Image.network(
-                      product.fields.imageUrl,
-                      width: double.infinity,
-                      height: 300,
-                      fit: BoxFit.cover,
-                      errorBuilder: (context, error, stackTrace) => Container(
-                        height: 300,
-                        color: Colors.grey,
-                        child: const Center(child: Text("Gagal memuat gambar")),
-                      ),
-                    ),
-                    Padding(
-                      padding: const EdgeInsets.all(16.0),
-                      child: Column(
-                        crossAxisAlignment: CrossAxisAlignment.start,
-                        children: [
-                          Text(
-                            product.fields.name,
-                            style: const TextStyle(
-                              fontSize: 24,
-                              fontWeight: FontWeight.bold,
-                            ),
-                          ),
-                          const SizedBox(height: 8),
-                          Text(
-                            "Brand: ${product.fields.brand}",
-                            style: TextStyle(color: Colors.grey[600]),
-                          ),
-                          Text(
-                            "Kategori: ${product.fields.category}",
-                            style: TextStyle(color: Colors.grey[600]),
-                          ),
-                          const SizedBox(height: 16),
-                          Text(
-                            "Rp ${product.fields.price}",
-                            style: const TextStyle(
-                              fontSize: 20,
-                              color: Colors.deepPurple,
-                              fontWeight: FontWeight.bold,
-                            ),
-                          ),
-                          const SizedBox(height: 24),
-                          const Text(
-                            "Deskripsi:",
-                            style: TextStyle(
-                              fontSize: 18,
-                              fontWeight: FontWeight.w600,
-                            ),
-                          ),
-                          Text(
-                            product.fields.description ??
-                                "Belum ada deskripsi.",
-                            style: const TextStyle(fontSize: 16),
-                          ),
-                          const SizedBox(height: 20),
-
-                          // Tombol Edit Deskripsi
-                          SizedBox(
-                            width: double.infinity,
-                            child: ElevatedButton(
-                              onPressed: () {
-                                Navigator.push(
-                                  context,
-                                  MaterialPageRoute(
-                                    builder: (context) => EditDescriptionForm(
-                                      productId: product.pk,
-                                    ),
-                                  ),
-                                ).then(
-                                  (_) => setState(() {}),
-                                ); // Refresh setelah kembali
-                              },
-                              style: ElevatedButton.styleFrom(
-                                backgroundColor: Colors.deepPurple,
-                              ),
-                              child: const Text(
-                                "Edit Deskripsi",
-                                style: TextStyle(color: Colors.white),
-                              ),
-                            ),
-                          ),
-
-                          const SizedBox(height: 12),
-
-                          SizedBox(
-                            width: double.infinity,
-                            child: ReviewProductButton(
-                              productId: product.pk.toString(),
-                              productName: product.fields.name,
-                            ),
-                          ),
-                        ],
-                      ),
-                    ),
-                  ],
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                Image.network(
+                  product.fields.imageUrl,
+                  width: double.infinity,
+                  height: 300,
+                  fit: BoxFit.cover,
+                  errorBuilder: (context, error, stackTrace) => Container(
+                    height: 300,
+                    color: Colors.grey,
+                    child: const Center(child: Text("Gagal memuat gambar")),
+                  ),
                 ),
-              );
+                Padding(
+                  padding: const EdgeInsets.all(16.0),
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      Text(
+                        product.fields.name,
+                        style: const TextStyle(
+                          fontSize: 24,
+                          fontWeight: FontWeight.bold,
+                        ),
+                      ),
+                      const SizedBox(height: 8),
+                      Text(
+                        "Brand: ${product.fields.brand}",
+                        style: TextStyle(color: Colors.grey[600]),
+                      ),
+                      Text(
+                        "Kategori: ${product.fields.category}",
+                        style: TextStyle(color: Colors.grey[600]),
+                      ),
+                      const SizedBox(height: 16),
+                      Text(
+                        "Rp ${product.fields.price}",
+                        style: const TextStyle(
+                          fontSize: 20,
+                          color: Colors.deepPurple,
+                          fontWeight: FontWeight.bold,
+                        ),
+                      ),
+                      const SizedBox(height: 24),
+                      const Text(
+                        "Deskripsi:",
+                        style: TextStyle(
+                          fontSize: 18,
+                          fontWeight: FontWeight.w600,
+                        ),
+                      ),
+                      Text(
+                        (product.fields.description == null ||
+                                product.fields.description.trim().isEmpty)
+                            ? "Belum ada deskripsi."
+                            : product.fields.description,
+                        style: const TextStyle(fontSize: 16),
+                      ),
+                      const SizedBox(height: 20),
+
+                      // tombol action (delete, edit)
+                      SizedBox(
+                        width: double.infinity,
+                        child: FavoriteButton(
+                          productId: product.pk,
+                          initialFavorite: false,
+                        ),
+                      ),
+
+                      const SizedBox(height: 12),
+
+                      // tombol action (delete, edit)
+                      SizedBox(
+                        width: double.infinity,
+                        child: ProductActionButton(product: product),
+                      ),
+
+                      const SizedBox(height: 12),
+
+                      // Tombol Edit Deskripsi
+                      SizedBox(
+                        width: double.infinity,
+                        child: ElevatedButton(
+                          onPressed: () {
+                            Navigator.push(
+                              context,
+                              MaterialPageRoute(
+                                builder: (context) =>
+                                    EditDescriptionForm(productId: product.pk),
+                              ),
+                            ).then(
+                              (_) => setState(() {}),
+                            ); // Refresh setelah kembali
+                          },
+                          style: ElevatedButton.styleFrom(
+                            backgroundColor: Colors.deepPurple,
+                          ),
+                          child: const Text(
+                            "Edit Deskripsi",
+                            style: TextStyle(color: Colors.white),
+                          ),
+                        ),
+                      ),
+
+                      const SizedBox(height: 12),
+
+                      SizedBox(
+                        width: double.infinity,
+                        child: ReviewProductButton(
+                          productId: product.pk.toString(),
+                          productName: product.fields.name,
+                        ),
+                      ),
+                    ],
+                  ),
+                ),
+              ],
+            ),
+          );
         },
       ),
     );

@@ -28,7 +28,7 @@ class ReviewProductButton extends StatelessWidget {
       style: ElevatedButton.styleFrom(
         backgroundColor: Colors.deepPurple,
         padding: const EdgeInsets.symmetric(horizontal: 24, vertical: 12),
-        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(8)),
+        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(24)),
       ),
       child: const Text(
         'Review Product',

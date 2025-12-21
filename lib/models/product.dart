@@ -55,7 +55,7 @@ class Fields {
     category: json["category"],
     price: json["price"],
     imageUrl: json["image_url"],
-    description: json["description"],
+    description: json["description"] ?? "",
     user: json["user"],
   );
 

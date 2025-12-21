@@ -23,7 +23,6 @@ class _LoginPageState extends State<LoginPage> {
     final request = context.watch<CookieRequest>();
 
     return Scaffold(
-      appBar: CustomShopAppBar(),
       backgroundColor: Color(0xFFF0F0F0),
       body: Center(
         child: SingleChildScrollView(
