@@ -14,7 +14,20 @@ class EditDescriptionForm extends StatefulWidget {
 
 class _EditDescriptionFormState extends State<EditDescriptionForm> {
   final _formKey = GlobalKey<FormState>();
-  String _description = "";
+  late TextEditingController _descriptionController;
+  bool _isLoading = false;
+
+  @override
+  void initState() {
+    super.initState();
+    _descriptionController = TextEditingController();
+  }
+
+  @override
+  void dispose() {
+    _descriptionController.dispose();
+    super.dispose();
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -31,21 +44,22 @@ class _EditDescriptionFormState extends State<EditDescriptionForm> {
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
               TextFormField(
+                controller: _descriptionController,
                 decoration: InputDecoration(
                   labelText: "Deskripsi Baru",
+                  hintText: "Masukkan deskripsi produk",
                   border: OutlineInputBorder(
                     borderRadius: BorderRadius.circular(5.0),
                   ),
                 ),
                 maxLines: 5,
-                onChanged: (String? value) {
-                  setState(() {
-                    _description = value!;
-                  });
-                },
+                enabled: !_isLoading,
                 validator: (String? value) {
-                  if (value == null || value.isEmpty) {
+                  if (value == null || value.trim().isEmpty) {
                     return "Deskripsi tidak boleh kosong!";
+                  }
+                  if (value.length < 10) {
+                    return "Deskripsi minimal 10 karakter!";
                   }
                   return null;
                 },
@@ -57,38 +71,73 @@ class _EditDescriptionFormState extends State<EditDescriptionForm> {
                   style: ElevatedButton.styleFrom(
                     backgroundColor: Colors.deepPurple,
                   ),
-                  onPressed: () async {
-                    if (_formKey.currentState!.validate()) {
-                      // Kirim data ke Django
-                      final response = await request.postJson(
-                        "https://rafsanjani41-primebasketplace.pbp.cs.ui.ac.id/detail/edit-flutter/${widget.productId}/update-flutter/",
-                        jsonEncode(<String, String>{
-                          'description': _description,
-                        }),
-                      );
+                  onPressed: _isLoading
+                      ? null
+                      : () async {
+                          if (_formKey.currentState!.validate()) {
+                            setState(() => _isLoading = true);
+                            
+                            try {
+                              // Kirim data ke Django
+                              final response = await request.postJson(
+                                "https://rafsanjani41-primebasketplace.pbp.cs.ui.ac.id/detail/product/${widget.productId}/update-flutter/",
+                                jsonEncode(<String, String>{
+                                  'description': _descriptionController.text.trim(),
+                                }),
+                              );
 
-                      if (response['status'] == 'success') {
-                        ScaffoldMessenger.of(context).showSnackBar(
-                          const SnackBar(
-                            content: Text("Deskripsi berhasil disimpan!"),
+                              if (!mounted) return;
+
+                              if (response != null && response['status'] == 'success') {
+                                ScaffoldMessenger.of(context).showSnackBar(
+                                  const SnackBar(
+                                    content: Text("Deskripsi berhasil disimpan!"),
+                                    backgroundColor: Colors.green,
+                                  ),
+                                );
+                                Navigator.pop(context); // Kembali ke halaman detail
+                              } else {
+                                final errorMessage = response?['message'] ?? 
+                                    "Terdapat kesalahan, silakan coba lagi.";
+                                ScaffoldMessenger.of(context).showSnackBar(
+                                  SnackBar(
+                                    content: Text(errorMessage),
+                                    backgroundColor: Colors.red,
+                                  ),
+                                );
+                              }
+                            } catch (e) {
+                              if (!mounted) return;
+                              
+                              print('Error saat edit description: $e');
+                              ScaffoldMessenger.of(context).showSnackBar(
+                                SnackBar(
+                                  content: Text(
+                                    "Error: $e",
+                                  ),
+                                  backgroundColor: Colors.red,
+                                ),
+                              );
+                            } finally {
+                              if (mounted) {
+                                setState(() => _isLoading = false);
+                              }
+                            }
+                          }
+                        },
+                  child: _isLoading
+                      ? const SizedBox(
+                          height: 20,
+                          width: 20,
+                          child: CircularProgressIndicator(
+                            strokeWidth: 2,
+                            valueColor: AlwaysStoppedAnimation<Color>(Colors.white),
                           ),
-                        );
-                        Navigator.pop(context); // Kembali ke halaman detail
-                      } else {
-                        ScaffoldMessenger.of(context).showSnackBar(
-                          const SnackBar(
-                            content: Text(
-                              "Terdapat kesalahan, silakan coba lagi.",
-                            ),
-                          ),
-                        );
-                      }
-                    }
-                  },
-                  child: const Text(
-                    "Simpan",
-                    style: TextStyle(color: Colors.white),
-                  ),
+                        )
+                      : const Text(
+                          "Simpan",
+                          style: TextStyle(color: Colors.white),
+                        ),
                 ),
               ),
             ],
