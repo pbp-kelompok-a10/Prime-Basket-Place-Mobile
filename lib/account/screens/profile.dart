@@ -154,7 +154,7 @@ class _ProfilePageState extends State<ProfilePage> {
     final imageUrl = account.fields.profilePicture;
 
     final proxyUrl = (imageUrl != null && imageUrl.isNotEmpty)
-        ? 'https://rafsanjani41-primebasketplace.pbp.cs.ui.ac.id/proxy-image/?url=${Uri.encodeComponent(imageUrl)}'
+        ? 'http://localhost:8000/proxy-image/?url=${Uri.encodeComponent(imageUrl)}'
         : null;
 
     return Container(

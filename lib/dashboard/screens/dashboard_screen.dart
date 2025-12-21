@@ -17,9 +17,7 @@ class DashboardPage extends StatefulWidget {
 
 class _DashboardPageState extends State<DashboardPage> {
   Future<List<Product>> fetchNews(CookieRequest request) async {
-    final response = await request.get(
-      'https://rafsanjani41-primebasketplace.pbp.cs.ui.ac.id/dashboard/json/',
-    );
+    final response = await request.get('http://localhost:8000/dashboard/json/');
 
     // Decode response to json format
     var data = response;
@@ -81,7 +79,7 @@ class _DashboardPageState extends State<DashboardPage> {
                 shrinkWrap: true,
                 physics: const NeverScrollableScrollPhysics(),
                 gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
-                  crossAxisCount: 2, // 2 card per row
+                  crossAxisCount: 2,
                   crossAxisSpacing: 12,
                   mainAxisSpacing: 12,
                   childAspectRatio: 0.72,
@@ -99,7 +97,13 @@ class _DashboardPageState extends State<DashboardPage> {
                           builder: (context) =>
                               ProductDetailPage(productId: product.pk),
                         ),
-                      );
+                      ).then((result) {
+                        if (result == true) {
+                          setState(() {
+                            // Trigger rebuild → FutureBuilder fetch ulang
+                          });
+                        }
+                      });
                     },
                   );
                 },
@@ -110,10 +114,6 @@ class _DashboardPageState extends State<DashboardPage> {
       ),
       floatingActionButton: FloatingActionButton(
         onPressed: () {
-          // Add your action here
-          ScaffoldMessenger.of(
-            context,
-          ).showSnackBar(const SnackBar(content: Text('Button pressed!')));
           // Navigate to form
           Navigator.push(
             context,

@@ -1,8 +1,13 @@
 import 'package:flutter/material.dart';
+import 'package:provider/provider.dart';
+import 'package:pbp_django_auth/pbp_django_auth.dart';
+
 import '../models/review_model.dart';
 import '../services/review_service.dart';
 import '../widgets/review_card.dart';
 import '../widgets/review_form_dialog.dart';
+import 'package:prime_basket_place_mobile/custom/custom_app_bar.dart';
+import 'package:prime_basket_place_mobile/custom/custom_drawer.dart';
 
 class ReviewListScreen extends StatefulWidget {
   final String productId;
@@ -30,11 +35,20 @@ class _ReviewListScreenState extends State<ReviewListScreen> {
   }
 
   Future<void> _loadData() async {
+    final request = context.read<CookieRequest>();
+
     setState(() => isLoading = true);
 
     try {
-      final loadedReviews = await ReviewService.getReviews(widget.productId);
-      final loadedStats = await ReviewService.getReviewStats(widget.productId);
+      final loadedReviews = await ReviewService.getReviews(
+        request: request,
+        productId: widget.productId,
+      );
+
+      final loadedStats = await ReviewService.getReviewStats(
+        request: request,
+        productId: widget.productId,
+      );
 
       setState(() {
         reviews = loadedReviews;
@@ -42,7 +56,6 @@ class _ReviewListScreenState extends State<ReviewListScreen> {
         isLoading = false;
       });
     } catch (e) {
-      // Jika API gagal, set ke kosong
       setState(() {
         reviews = [];
         stats = ReviewStats(averageRating: 0.0, totalReviews: 0);
@@ -56,34 +69,25 @@ class _ReviewListScreenState extends State<ReviewListScreen> {
       context: context,
       builder: (context) => ReviewFormDialog(
         onSubmit: (rating, comment, images) async {
+          final request = context.read<CookieRequest>();
+
           try {
-            // Coba submit ke API
             final success = await ReviewService.submitReview(
+              request: request,
               productId: widget.productId,
               rating: rating,
               comment: comment,
-              imageBase64List: images,
             );
 
-            if (success) {
-              if (mounted) {
-                Navigator.pop(context);
-                ScaffoldMessenger.of(context).showSnackBar(
-                  const SnackBar(
-                    content: Text('Review submitted successfully!'),
-                  ),
-                );
-                _loadData(); // Reload reviews
-              }
-            } else {
-              if (mounted) {
-                ScaffoldMessenger.of(context).showSnackBar(
-                  const SnackBar(content: Text('Failed to submit review')),
-                );
-              }
+            if (success && mounted) {
+              Navigator.pop(context);
+              ScaffoldMessenger.of(context).showSnackBar(
+                const SnackBar(content: Text('Review submitted successfully!')),
+              );
+              _loadData();
             }
           } catch (e) {
-            // Jika API gagal, tambahkan review secara lokal untuk testing
+            // fallback lokal (testing only)
             if (mounted) {
               Navigator.pop(context);
               setState(() {
@@ -94,15 +98,17 @@ class _ReviewListScreenState extends State<ReviewListScreen> {
                     userName: 'You',
                     rating: rating,
                     comment: comment,
-                    images: [],
+                    images: const [],
                     createdAt: DateTime.now(),
                   ),
                 );
+
                 stats = ReviewStats(
                   averageRating: _calculateNewAverage(rating),
                   totalReviews: reviews.length,
                 );
               });
+
               ScaffoldMessenger.of(context).showSnackBar(
                 const SnackBar(
                   content: Text('Review added (local testing mode)'),
@@ -125,71 +131,9 @@ class _ReviewListScreenState extends State<ReviewListScreen> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: Colors.grey[200],
-      appBar: AppBar(
-        backgroundColor: Colors.white,
-        elevation: 0,
-        leading: IconButton(
-          icon: const Icon(Icons.arrow_back, color: Colors.black),
-          onPressed: () => Navigator.pop(context),
-        ),
-        title: Row(
-          children: [
-            Container(
-              padding: const EdgeInsets.all(8),
-              decoration: BoxDecoration(
-                color: Colors.deepPurple,
-                borderRadius: BorderRadius.circular(8),
-              ),
-              child: const Icon(
-                Icons.shopping_basket,
-                color: Colors.white,
-                size: 24,
-              ),
-            ),
-            const SizedBox(width: 12),
-            const Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                Text(
-                  'PRIME',
-                  style: TextStyle(
-                    color: Colors.deepPurple,
-                    fontSize: 12,
-                    fontWeight: FontWeight.bold,
-                  ),
-                ),
-                Text(
-                  'BASKET',
-                  style: TextStyle(
-                    color: Colors.deepPurple,
-                    fontSize: 12,
-                    fontWeight: FontWeight.bold,
-                  ),
-                ),
-                Text(
-                  'PLACE',
-                  style: TextStyle(
-                    color: Colors.deepPurple,
-                    fontSize: 12,
-                    fontWeight: FontWeight.bold,
-                  ),
-                ),
-              ],
-            ),
-          ],
-        ),
-        actions: [
-          IconButton(
-            icon: const Icon(Icons.favorite_border, color: Colors.deepPurple),
-            onPressed: () {},
-          ),
-          IconButton(
-            icon: const Icon(Icons.person_outline, color: Colors.deepPurple),
-            onPressed: () {},
-          ),
-        ],
-      ),
+      backgroundColor: const Color(0xFFF0F0F0),
+      appBar: const CustomShopAppBar(),
+      drawer: const LeftDrawer(),
       body: isLoading
           ? const Center(child: CircularProgressIndicator())
           : SingleChildScrollView(
@@ -210,7 +154,7 @@ class _ReviewListScreenState extends State<ReviewListScreen> {
                     Row(
                       crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
-                        // Rating Summary Box
+                        // Summary Box
                         Container(
                           width: 300,
                           padding: const EdgeInsets.all(32),
@@ -284,12 +228,11 @@ class _ReviewListScreenState extends State<ReviewListScreen> {
                           ),
                         ),
                         const SizedBox(width: 24),
-                        // Reviews List
                         Expanded(
                           child: Column(
-                            children: reviews.map((review) {
-                              return ReviewCard(review: review);
-                            }).toList(),
+                            children: reviews
+                                .map((review) => ReviewCard(review: review))
+                                .toList(),
                           ),
                         ),
                       ],

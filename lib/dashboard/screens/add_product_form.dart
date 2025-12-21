@@ -3,12 +3,15 @@ import 'package:flutter/services.dart';
 import 'package:prime_basket_place_mobile/custom/custom_app_bar.dart';
 import 'package:prime_basket_place_mobile/custom/custom_drawer.dart';
 import 'package:prime_basket_place_mobile/dashboard/screens/dashboard_screen.dart';
+import 'package:prime_basket_place_mobile/models/product.dart';
 import 'dart:convert';
 import 'package:provider/provider.dart';
 import 'package:pbp_django_auth/pbp_django_auth.dart';
 
 class AddProductFormPage extends StatefulWidget {
-  const AddProductFormPage({super.key});
+  final Product? product; // null = ADD, ada = EDIT
+
+  const AddProductFormPage({super.key, this.product});
 
   @override
   State<AddProductFormPage> createState() => _AddProductFormPageState();
@@ -16,12 +19,15 @@ class AddProductFormPage extends StatefulWidget {
 
 class _AddProductFormPageState extends State<AddProductFormPage> {
   final _formKey = GlobalKey<FormState>();
-  String _name = "";
-  String _brand = "";
-  String _category = "other"; // default
-  double _price = 0;
-  String _thumbnail = "";
-  String _description = "";
+
+  // Controllers
+  late TextEditingController _nameController;
+  late TextEditingController _brandController;
+  late TextEditingController _priceController;
+  late TextEditingController _thumbnailController;
+  late TextEditingController _descriptionController;
+
+  String _category = "Other";
 
   final List<String> _categories = [
     'Jersey',
@@ -32,9 +38,43 @@ class _AddProductFormPageState extends State<AddProductFormPage> {
     'Other',
   ];
 
+  bool get isEdit => widget.product != null;
+
+  @override
+  void initState() {
+    super.initState();
+
+    final p = widget.product;
+
+    _nameController = TextEditingController(text: p?.fields.name ?? "");
+    _brandController = TextEditingController(text: p?.fields.brand ?? "");
+    _priceController = TextEditingController(
+      text: p?.fields.price.toString() ?? "",
+    );
+    _thumbnailController = TextEditingController(
+      text: p?.fields.imageUrl ?? "",
+    );
+    _descriptionController = TextEditingController(
+      text: p?.fields.description ?? "",
+    );
+
+    _category = p?.fields.category ?? "Other";
+  }
+
+  @override
+  void dispose() {
+    _nameController.dispose();
+    _brandController.dispose();
+    _priceController.dispose();
+    _thumbnailController.dispose();
+    _descriptionController.dispose();
+    super.dispose();
+  }
+
   @override
   Widget build(BuildContext context) {
     final request = context.watch<CookieRequest>();
+
     return Scaffold(
       appBar: const CustomShopAppBar(),
       drawer: const LeftDrawer(),
@@ -44,243 +84,148 @@ class _AddProductFormPageState extends State<AddProductFormPage> {
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
-              // TITLE PAGE
+              // ===== TITLE =====
               Container(
                 alignment: Alignment.center,
-                margin: const EdgeInsets.only(bottom: 16, top: 16),
+                margin: const EdgeInsets.symmetric(vertical: 16),
                 child: Text(
-                  "ADD PRODUCT",
-                  style: TextStyle(
+                  isEdit ? "EDIT PRODUCT" : "ADD PRODUCT",
+                  style: const TextStyle(
                     fontSize: 24,
                     fontWeight: FontWeight.bold,
                     color: Color(0xFF4C2FA0),
-                    fontFamily: 'Roboto',
                   ),
-                ),
-              ),
-              // === Name ===
-              Padding(
-                padding: const EdgeInsets.all(8.0),
-                child: TextFormField(
-                  decoration: InputDecoration(
-                    hintText: "add the name to the product!",
-                    labelText: "Product's name",
-                    border: OutlineInputBorder(
-                      borderRadius: BorderRadius.circular(5.0),
-                    ),
-                  ),
-                  onChanged: (String? value) {
-                    setState(() {
-                      _name = value!;
-                    });
-                  },
-                  validator: (String? value) {
-                    if (value == null || value.isEmpty) {
-                      return "Name cannot be unnamed.";
-                    }
-                    return null;
-                  },
                 ),
               ),
 
-              // === Brand ===
-              Padding(
-                padding: const EdgeInsets.all(8.0),
-                child: TextFormField(
-                  decoration: InputDecoration(
-                    hintText: "Input the brand's name that made this product!",
-                    labelText: "Brand's name",
-                    border: OutlineInputBorder(
-                      borderRadius: BorderRadius.circular(5.0),
-                    ),
-                  ),
-                  onChanged: (String? value) {
-                    setState(() {
-                      _brand = value!;
-                    });
-                  },
-                  validator: (String? value) {
-                    if (value == null || value.isEmpty) {
-                      return "Brand's name cannot be unnamed";
-                    }
-                    return null;
-                  },
-                ),
+              // ===== NAME =====
+              _buildTextField(
+                controller: _nameController,
+                label: "Product Name",
+                hint: "Enter product name",
+                validator: (v) =>
+                    v == null || v.isEmpty ? "Name cannot be empty" : null,
               ),
 
-              // === Category ===
+              // ===== BRAND =====
+              _buildTextField(
+                controller: _brandController,
+                label: "Brand",
+                hint: "Enter brand name",
+                validator: (v) =>
+                    v == null || v.isEmpty ? "Brand cannot be empty" : null,
+              ),
+
+              // ===== CATEGORY =====
               Padding(
-                padding: const EdgeInsets.all(8.0),
+                padding: const EdgeInsets.all(8),
                 child: DropdownButtonFormField<String>(
-                  decoration: InputDecoration(
-                    labelText: "Category",
-                    border: OutlineInputBorder(
-                      borderRadius: BorderRadius.circular(5.0),
-                    ),
-                  ),
+                  value: _category,
+                  decoration: _inputDecoration("Category"),
                   items: _categories
-                      .map(
-                        (cat) => DropdownMenuItem(
-                          value: cat,
-                          child: Text(cat[0].toUpperCase() + cat.substring(1)),
-                        ),
-                      )
+                      .map((c) => DropdownMenuItem(value: c, child: Text(c)))
                       .toList(),
-                  onChanged: (String? newValue) {
-                    setState(() {
-                      _category = newValue!;
-                    });
-                  },
-                ),
-              ),
-
-              // === Price ===
-              Padding(
-                padding: const EdgeInsets.all(8.0),
-                child: TextFormField(
-                  keyboardType: TextInputType.number,
-                  inputFormatters: [FilteringTextInputFormatter.digitsOnly],
-                  decoration: InputDecoration(
-                    hintText: "Product's price",
-                    labelText: "Product's price",
-                    border: OutlineInputBorder(
-                      borderRadius: BorderRadius.circular(5.0),
-                    ),
-                  ),
-
                   onChanged: (value) {
-                    if (value.isEmpty) {
-                      _price = 0; // or null, depending on your logic
-                    } else {
-                      _price = double.parse(value);
-                    }
-                  },
-
-                  validator: (value) {
-                    if (value == null || value.isEmpty) {
-                      return 'Please input numbers.';
-                    }
-                    return null;
+                    setState(() => _category = value!);
                   },
                 ),
               ),
 
-              // === Thumbnail URL ===
+              // ===== PRICE =====
+              _buildTextField(
+                controller: _priceController,
+                label: "Price",
+                hint: "Enter price",
+                keyboardType: TextInputType.number,
+                inputFormatters: [FilteringTextInputFormatter.digitsOnly],
+                validator: (v) =>
+                    v == null || v.isEmpty ? "Price required" : null,
+              ),
+
+              // ===== THUMBNAIL =====
+              _buildTextField(
+                controller: _thumbnailController,
+                label: "Thumbnail URL",
+                hint: "Optional image URL",
+                validator: (v) {
+                  if (v == null || v.isEmpty) return null;
+                  final uri = Uri.tryParse(v);
+                  return (uri == null || !uri.isAbsolute)
+                      ? "Invalid URL"
+                      : null;
+                },
+              ),
+
+              // ===== DESCRIPTION =====
+              _buildTextField(
+                controller: _descriptionController,
+                label: "Description",
+                hint: "Add product description",
+                maxLines: 5,
+              ),
+
+              // ===== SAVE BUTTON =====
               Padding(
-                padding: const EdgeInsets.all(8.0),
-                child: TextFormField(
-                  decoration: InputDecoration(
-                    hintText: "URL Thumbnail (optional)",
-                    labelText: "URL Thumbnail",
-                    border: OutlineInputBorder(
-                      borderRadius: BorderRadius.circular(5.0),
-                    ),
+                padding: const EdgeInsets.all(12),
+                child: ElevatedButton(
+                  style: ElevatedButton.styleFrom(
+                    backgroundColor: const Color(0xFF4C2FA0),
+                    minimumSize: const Size(double.infinity, 48),
                   ),
-                  onChanged: (String? value) {
-                    setState(() {
-                      _thumbnail = value!;
-                    });
-                  },
+                  onPressed: () async {
+                    if (!_formKey.currentState!.validate()) return;
 
-                  validator: (String? value) {
-                    if (value == null) return null;
+                    final data = {
+                      "name": _nameController.text,
+                      "brand": _brandController.text,
+                      "category": _category,
+                      "price": double.parse(_priceController.text),
+                      "image_url": _thumbnailController.text,
+                      "description": _descriptionController.text,
+                    };
 
-                    final uri = Uri.tryParse(value);
-                    if (uri == null || !uri.isAbsolute) {
-                      return "Input the valid URL!";
-                    }
+                    final response = isEdit
+                        ? await request.postJson(
+                            "http://localhost:8000/dashboard/update-product/${widget.product!.pk}/",
+                            jsonEncode({"fields": data}),
+                          )
+                        : await request.postJson(
+                            "http://localhost:8000/dashboard/create-product-flutter/",
+                            jsonEncode({"fields": data}),
+                          );
 
-                    return null;
-                  },
-                ),
-              ),
+                    if (!context.mounted) return;
 
-              // === Description ===
-              Padding(
-                padding: const EdgeInsets.all(8.0),
-                child: TextFormField(
-                  maxLines: 5,
-                  decoration: InputDecoration(
-                    hintText:
-                        "Add details or note or points to what your product has!",
-                    labelText: "Product's description",
-                    border: OutlineInputBorder(
-                      borderRadius: BorderRadius.circular(5.0),
-                    ),
-                  ),
-                  onChanged: (String? value) {
-                    setState(() {
-                      _description = value!;
-                    });
-                  },
-                  // validator: (String? value) {
-                  //   if (value == null || value.isEmpty) {
-                  //     return "Product's description cannot be empty.";
-                  //   }
-                  //   return null;
-                  // },
-                ),
-              ),
-
-              // === Tombol Simpan ===
-              Align(
-                alignment: Alignment.bottomCenter,
-                child: Padding(
-                  padding: const EdgeInsets.all(8.0),
-                  child: ElevatedButton(
-                    style: ButtonStyle(
-                      backgroundColor: WidgetStateProperty.all(
-                        Color(0xFF4C2FA0),
-                      ),
-                    ),
-                    onPressed: () async {
-                      if (!_formKey.currentState!.validate()) return;
-
-                      final response = await request.postJson(
-                        "https://rafsanjani41-primebasketplace.pbp.cs.ui.ac.id/dashboard/create-product-flutter/",
-                        jsonEncode({
-                          "fields": {
-                            "name": _name,
-                            "brand": _brand,
-                            "category": _category,
-                            "price": _price,
-                            "image_url": _thumbnail,
-                            "description": _description,
-                          },
-                        }),
+                    if (response['status'] == 'success') {
+                      ScaffoldMessenger.of(context).showSnackBar(
+                        SnackBar(
+                          content: Text(
+                            isEdit
+                                ? "Product updated successfully!"
+                                : "Product added successfully!",
+                          ),
+                        ),
                       );
 
-                      if (!context.mounted) return;
-
-                      if (response['status'] == 'success') {
-                        ScaffoldMessenger.of(context).showSnackBar(
-                          const SnackBar(
-                            content: Text("Product successfully saved!"),
+                      Navigator.pushReplacement(
+                        context,
+                        MaterialPageRoute(
+                          builder: (_) => const DashboardPage(),
+                        ),
+                      );
+                    } else {
+                      ScaffoldMessenger.of(context).showSnackBar(
+                        SnackBar(
+                          content: Text(
+                            response['message'] ?? "Something went wrong",
                           ),
-                        );
-
-                        Navigator.pushReplacement(
-                          context,
-                          MaterialPageRoute(
-                            builder: (context) => const DashboardPage(),
-                          ),
-                        );
-                      } else {
-                        ScaffoldMessenger.of(context).showSnackBar(
-                          SnackBar(
-                            content: Text(
-                              response['message'] ??
-                                  "Something went wrong, please try again.",
-                            ),
-                          ),
-                        );
-                      }
-                    },
-
-                    child: const Text(
-                      "Save",
-                      style: TextStyle(color: Colors.white),
-                    ),
+                        ),
+                      );
+                    }
+                  },
+                  child: Text(
+                    isEdit ? "Update" : "Save",
+                    style: const TextStyle(color: Colors.white),
                   ),
                 ),
               ),
@@ -288,6 +233,37 @@ class _AddProductFormPageState extends State<AddProductFormPage> {
           ),
         ),
       ),
+    );
+  }
+
+  // ===== HELPER =====
+  Widget _buildTextField({
+    required TextEditingController controller,
+    required String label,
+    required String hint,
+    int maxLines = 1,
+    TextInputType keyboardType = TextInputType.text,
+    List<TextInputFormatter>? inputFormatters,
+    String? Function(String?)? validator,
+  }) {
+    return Padding(
+      padding: const EdgeInsets.all(8),
+      child: TextFormField(
+        controller: controller,
+        maxLines: maxLines,
+        keyboardType: keyboardType,
+        inputFormatters: inputFormatters,
+        decoration: _inputDecoration(label, hint: hint),
+        validator: validator,
+      ),
+    );
+  }
+
+  InputDecoration _inputDecoration(String label, {String? hint}) {
+    return InputDecoration(
+      labelText: label,
+      hintText: hint,
+      border: OutlineInputBorder(borderRadius: BorderRadius.circular(5)),
     );
   }
 }

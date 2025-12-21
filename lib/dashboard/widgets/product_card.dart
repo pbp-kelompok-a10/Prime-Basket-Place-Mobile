@@ -35,7 +35,7 @@ class ProductCard extends StatelessWidget {
                 AspectRatio(
                   aspectRatio: 1,
                   child: Image.network(
-                    'https://rafsanjani41-primebasketplace.pbp.cs.ui.ac.id/dashboard/proxy-image/?url=${Uri.encodeComponent(product.fields.imageUrl)}',
+                    'http://localhost:8000/dashboard/proxy-image/?url=${Uri.encodeComponent(product.fields.imageUrl)}',
                     height: 150,
                     width: double.infinity,
                     fit: BoxFit.cover,
