@@ -13,9 +13,7 @@ class AccountProvider extends ChangeNotifier {
 
     final response = await http.post(
       url,
-      headers: {
-        'Content-Type': 'application/json',
-      },
+      headers: {'Content-Type': 'application/json'},
     );
 
     if (response.statusCode == 200) {
@@ -26,10 +24,9 @@ class AccountProvider extends ChangeNotifier {
 
     return false;
   }
-   void setAccount(UserAccount account) {
+
+  void setAccount(UserAccount account) {
     this.account = account;
     notifyListeners();
   }
-
 }
-

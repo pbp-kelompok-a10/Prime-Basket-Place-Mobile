@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:prime_basket_place_mobile/dashboard/screens/dashboard_screen.dart';
 import 'package:prime_basket_place_mobile/homepage/screens/homepage.dart';
 import 'package:prime_basket_place_mobile/account/screens/profile.dart';
+import 'package:prime_basket_place_mobile/about.dart';
 
 class LeftDrawer extends StatelessWidget {
   const LeftDrawer({super.key});
@@ -86,7 +87,12 @@ class LeftDrawer extends StatelessWidget {
               _DrawerItem(
                 icon: Icons.info_outline,
                 label: "About Us",
-                onTap: () => _goTo(context),
+                onTap: () {
+                  Navigator.push(
+                    context,
+                    MaterialPageRoute(builder: (_) => const AboutPage()),
+                  );
+                },
               ),
             ],
           ),
