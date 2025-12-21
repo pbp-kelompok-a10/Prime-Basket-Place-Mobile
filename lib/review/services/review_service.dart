@@ -1,9 +1,9 @@
 import 'dart:convert';
 import 'package:http/http.dart' as http;
+import 'package:pbp_django_auth/pbp_django_auth.dart';
 import '../models/review_model.dart';
 
 class ReviewService {
-  // ← UBAH URL INI sesuai Django backend Anda
   static const String baseUrl =
       'https://rafsanjani41-primebasketplace.pbp.cs.ui.ac.id';
 
@@ -42,33 +42,28 @@ class ReviewService {
     }
   }
 
-  // Submit a new review
+  // Submit a new review WITH AUTHENTICATION
   static Future<bool> submitReview({
+    required CookieRequest request, // Tambahkan parameter ini
     required String productId,
     required int rating,
     required String comment,
     List<String>? imageBase64List,
   }) async {
     try {
-      final response = await http.post(
-        Uri.parse('$baseUrl/reviews/create-flutter/$productId/'),
-        headers: {
-          'Content-Type': 'application/json',
-          // Tambahkan authentication header jika diperlukan
-          // 'Cookie': 'sessionid=your_session_id',
-        },
-        body: json.encode({
+      final response = await request.postJson(
+        '$baseUrl/reviews/create-flutter/$productId/',
+        jsonEncode({
           'rating': rating,
           'comment': comment,
           'images': imageBase64List ?? [],
         }),
       );
 
-      if (response.statusCode == 201 || response.statusCode == 200) {
+      if (response['status'] == 'success') {
         return true;
       } else {
-        final responseData = json.decode(response.body);
-        throw Exception(responseData['message'] ?? 'Failed to submit review');
+        throw Exception(response['message'] ?? 'Failed to submit review');
       }
     } catch (e) {
       throw Exception('Error submitting review: $e');
