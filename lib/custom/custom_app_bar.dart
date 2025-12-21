@@ -5,10 +5,14 @@ import 'package:prime_basket_place_mobile/homepage/screens/homepage.dart';
 class CustomShopAppBar extends StatelessWidget implements PreferredSizeWidget {
   final Color backgroundColor;
   final Color primaryColor;
+  // 1. Tambahkan variabel callback ini
+  final VoidCallback? onLogoTap;
 
   const CustomShopAppBar({
     this.backgroundColor = const Color(0xFFE5E5E5),
     this.primaryColor = const Color(0xFF4C2FA0),
+    // 2. Tambahkan parameter ini di constructor
+    this.onLogoTap, 
     super.key,
   });
 
@@ -39,19 +43,21 @@ class CustomShopAppBar extends StatelessWidget implements PreferredSizeWidget {
 
                 /// BASKET LOGO
                 GestureDetector(
-                  onTap: () {
+                  // 3. Ubah bagian ini agar menggunakan onLogoTap jika ada
+                  onTap: onLogoTap ?? () {
+                    // Default action jika onLogoTap tidak diisi
                     Navigator.push(
                       context,
                       MaterialPageRoute(builder: (_) => const Homepage()),
                     );
                   },
-                  child: Image.asset("logo_ball.png", height: 32),
+                  child: Image.asset("assets/logo_ball.png", height: 32), // Pastikan path asset benar
                 ),
 
                 const SizedBox(width: 20),
 
                 /// BRAND NAME
-                Image.asset("title_brand.png", height: 32),
+                Image.asset("assets/title_brand.png", height: 32), // Pastikan path asset benar
 
                 const Spacer(),
 

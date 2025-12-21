@@ -52,12 +52,12 @@ class Fields {
     });
 
     factory Fields.fromJson(Map<String, dynamic> json) => Fields(
-        name: json["name"],
-        brand: json["brand"],
-        category: json["category"],
-        price: json["price"],
-        imageUrl: json["image_url"],
-        description: json["description"],
+        name: json["name"] ?? '',
+        brand: json["brand"] ?? '',
+        category: json["category"] ?? '',
+        price: json["price"] ?? 0,
+        imageUrl: json["image_url"] ?? '',
+        description: json["description"] ?? '',
         user: json["user"],
     );
 

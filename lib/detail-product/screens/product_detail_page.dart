@@ -16,17 +16,37 @@ class ProductDetailPage extends StatefulWidget {
 
 class _ProductDetailPageState extends State<ProductDetailPage> {
   Future<List<ProductDetail>> fetchProductDetail(CookieRequest request) async {
-    var response = await request.get(
-      'https://rafsanjani41-primebasketplace.pbp.cs.ui.ac.id/detail/json/${widget.productId}/detail-json',
-    );
+    try {
+      var response = await request.get(
+        'https://rafsanjani41-primebasketplace.pbp.cs.ui.ac.id/detail/product/${widget.productId}/detail-json/',
+      );
 
-    List<ProductDetail> listProduct = [];
-    for (var d in response) {
-      if (d != null) {
-        listProduct.add(ProductDetail.fromJson(d));
+      List<ProductDetail> listProduct = [];
+      
+      // Handle null response
+      if (response == null) {
+        throw Exception('Response adalah null');
       }
+
+      // Jika response adalah list
+      if (response is List) {
+        for (var d in response) {
+          if (d != null) {
+            listProduct.add(ProductDetail.fromJson(d));
+          }
+        }
+      } else if (response is Map) {
+        // Jika response adalah single object, tambahkan ke list
+        listProduct.add(ProductDetail.fromJson(Map<String, dynamic>.from(response)));
+      } else {
+        throw Exception('Format response tidak dikenali: ${response.runtimeType}');
+      }
+
+      return listProduct;
+    } catch (e) {
+      print('Error saat fetch product detail: $e');
+      throw Exception('Gagal memuat detail produk: $e');
     }
-    return listProduct;
   }
 
   @override
@@ -38,14 +58,48 @@ class _ProductDetailPageState extends State<ProductDetailPage> {
       body: FutureBuilder(
         future: fetchProductDetail(request),
         builder: (context, AsyncSnapshot snapshot) {
-          if (snapshot.data == null) {
+          // Tangani error
+          if (snapshot.hasError) {
+            return Center(
+              child: Padding(
+                padding: const EdgeInsets.all(16.0),
+                child: Column(
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  children: [
+                    const Text(
+                      'Gagal memuat data produk',
+                      style: TextStyle(
+                        fontSize: 18,
+                        fontWeight: FontWeight.bold,
+                      ),
+                    ),
+                    const SizedBox(height: 16),
+                    Text(
+                      'Error: ${snapshot.error}',
+                      textAlign: TextAlign.center,
+                      style: const TextStyle(color: Colors.red),
+                    ),
+                  ],
+                ),
+              ),
+            );
+          }
+
+          // Loading state
+          if (snapshot.connectionState == ConnectionState.waiting) {
             return const Center(child: CircularProgressIndicator());
-          } else {
-            if (!snapshot.hasData) {
-              return const Center(child: Text("Data produk tidak ditemukan."));
-            } else {
-              ProductDetail product = snapshot.data![0]; // Ambil item pertama
-              return SingleChildScrollView(
+          }
+
+          // Check if data is null atau empty
+          if (snapshot.data == null || snapshot.data!.isEmpty) {
+            return const Center(
+              child: Text("Data produk tidak ditemukan."),
+            );
+          }
+
+          // Success state
+          ProductDetail product = snapshot.data![0]; // Ambil item pertama
+          return SingleChildScrollView(
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
@@ -146,8 +200,6 @@ class _ProductDetailPageState extends State<ProductDetailPage> {
                   ],
                 ),
               );
-            }
-          }
         },
       ),
     );
