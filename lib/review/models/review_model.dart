@@ -22,7 +22,9 @@ class Review {
       rating: json['rating'] ?? 0,
       comment: json['comment'] ?? '',
       images: List<String>.from(json['images'] ?? []),
-      createdAt: DateTime.parse(json['created_at'] ?? DateTime.now().toIso8601String()),
+      createdAt: DateTime.parse(
+        json['created_at'] ?? DateTime.now().toIso8601String(),
+      ),
     );
   }
 
@@ -42,10 +44,7 @@ class ReviewStats {
   final double averageRating;
   final int totalReviews;
 
-  ReviewStats({
-    required this.averageRating,
-    required this.totalReviews,
-  });
+  ReviewStats({required this.averageRating, required this.totalReviews});
 
   factory ReviewStats.fromJson(Map<String, dynamic> json) {
     return ReviewStats(

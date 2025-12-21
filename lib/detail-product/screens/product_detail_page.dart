@@ -21,7 +21,7 @@ class _ProductDetailPageState extends State<ProductDetailPage> {
   Future<List<Product>> fetchProductDetail(CookieRequest request) async {
     try {
       var response = await request.get(
-        'http://localhost:8000/detail/product/${widget.productId}/detail-json/',
+        'https://rafsanjani41-primebasketplace.pbp.cs.ui.ac.id/detail/product/${widget.productId}/detail-json/',
       );
 
       List<Product> listProduct = [];

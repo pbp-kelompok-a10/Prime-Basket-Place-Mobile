@@ -1,7 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:pbp_django_auth/pbp_django_auth.dart';
-
 import '../models/review_model.dart';
 import '../services/review_service.dart';
 import '../widgets/review_card.dart';
@@ -27,6 +26,7 @@ class _ReviewListScreenState extends State<ReviewListScreen> {
   List<Review> reviews = [];
   ReviewStats? stats;
   bool isLoading = true;
+  bool hasUserReviewed = false;
 
   @override
   void initState() {
@@ -35,20 +35,19 @@ class _ReviewListScreenState extends State<ReviewListScreen> {
   }
 
   Future<void> _loadData() async {
-    final request = context.read<CookieRequest>();
-
     setState(() => isLoading = true);
-
     try {
-      final loadedReviews = await ReviewService.getReviews(
-        request: request,
-        productId: widget.productId,
-      );
+      final loadedReviews = await ReviewService.getReviews(widget.productId);
+      final loadedStats = await ReviewService.getReviewStats(widget.productId);
 
-      final loadedStats = await ReviewService.getReviewStats(
-        request: request,
-        productId: widget.productId,
-      );
+      // Check if current user has already reviewed
+      final request = context.read<CookieRequest>();
+      if (request.loggedIn) {
+        // Cek apakah ada review dari user ini
+        hasUserReviewed = loadedReviews.any(
+          (review) => review.userName == request.jsonData['username'],
+        );
+      }
 
       setState(() {
         reviews = loadedReviews;
@@ -65,53 +64,58 @@ class _ReviewListScreenState extends State<ReviewListScreen> {
   }
 
   void _showReviewDialog() {
+    final request = context.read<CookieRequest>();
+
+    if (!request.loggedIn) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(
+          content: Text('Please login to write a review'),
+          backgroundColor: Colors.red,
+        ),
+      );
+      return;
+    }
+
+    if (hasUserReviewed) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(
+          content: Text('You have already reviewed this product'),
+          backgroundColor: Colors.orange,
+        ),
+      );
+      return;
+    }
+
     showDialog(
       context: context,
       builder: (context) => ReviewFormDialog(
         onSubmit: (rating, comment, images) async {
-          final request = context.read<CookieRequest>();
-
           try {
             final success = await ReviewService.submitReview(
-              request: request,
+              request: request, // Pass the authenticated request
               productId: widget.productId,
               rating: rating,
               comment: comment,
+              imageBase64List: images,
             );
 
             if (success && mounted) {
               Navigator.pop(context);
               ScaffoldMessenger.of(context).showSnackBar(
-                const SnackBar(content: Text('Review submitted successfully!')),
+                const SnackBar(
+                  content: Text('Review submitted successfully!'),
+                  backgroundColor: Colors.green,
+                ),
               );
-              _loadData();
+              _loadData(); // Reload reviews
             }
           } catch (e) {
-            // fallback lokal (testing only)
             if (mounted) {
               Navigator.pop(context);
-              setState(() {
-                reviews.insert(
-                  0,
-                  Review(
-                    id: DateTime.now().millisecondsSinceEpoch.toString(),
-                    userName: 'You',
-                    rating: rating,
-                    comment: comment,
-                    images: const [],
-                    createdAt: DateTime.now(),
-                  ),
-                );
-
-                stats = ReviewStats(
-                  averageRating: _calculateNewAverage(rating),
-                  totalReviews: reviews.length,
-                );
-              });
-
               ScaffoldMessenger.of(context).showSnackBar(
-                const SnackBar(
-                  content: Text('Review added (local testing mode)'),
+                SnackBar(
+                  content: Text('Failed to submit review: ${e.toString()}'),
+                  backgroundColor: Colors.red,
                 ),
               );
             }
@@ -121,19 +125,12 @@ class _ReviewListScreenState extends State<ReviewListScreen> {
     );
   }
 
-  double _calculateNewAverage(int newRating) {
-    if (reviews.isEmpty) return newRating.toDouble();
-    final totalRating =
-        reviews.fold<int>(0, (sum, review) => sum + review.rating) + newRating;
-    return totalRating / (reviews.length + 1);
-  }
-
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: const Color(0xFFF0F0F0),
-      appBar: const CustomShopAppBar(),
-      drawer: const LeftDrawer(),
+      backgroundColor: Color(0xFFF0F0F0),
+      appBar: const CustomShopAppBar(), // Menggunakan AppBar custom Anda
+      drawer: const LeftDrawer(), // Menggunakan Drawer custom Anda
       body: isLoading
           ? const Center(child: CircularProgressIndicator())
           : SingleChildScrollView(
@@ -142,9 +139,9 @@ class _ReviewListScreenState extends State<ReviewListScreen> {
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
-                    const Text(
-                      'Rating & Review',
-                      style: TextStyle(
+                    Text(
+                      'Rating & Review - ${widget.productName}',
+                      style: const TextStyle(
                         fontSize: 32,
                         fontWeight: FontWeight.bold,
                         color: Colors.deepPurple,
@@ -154,7 +151,7 @@ class _ReviewListScreenState extends State<ReviewListScreen> {
                     Row(
                       crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
-                        // Summary Box
+                        // Rating Summary Box
                         Container(
                           width: 300,
                           padding: const EdgeInsets.all(32),
@@ -177,9 +174,9 @@ class _ReviewListScreenState extends State<ReviewListScreen> {
                                 ),
                                 child: const Center(
                                   child: Icon(
-                                    Icons.person_outline,
+                                    Icons.star,
                                     size: 60,
-                                    color: Colors.grey,
+                                    color: Colors.amber,
                                   ),
                                 ),
                               ),
@@ -206,7 +203,9 @@ class _ReviewListScreenState extends State<ReviewListScreen> {
                                 child: ElevatedButton(
                                   onPressed: _showReviewDialog,
                                   style: ElevatedButton.styleFrom(
-                                    backgroundColor: Colors.deepPurple,
+                                    backgroundColor: hasUserReviewed
+                                        ? Colors.grey
+                                        : Colors.deepPurple,
                                     padding: const EdgeInsets.symmetric(
                                       vertical: 16,
                                     ),
@@ -214,9 +213,11 @@ class _ReviewListScreenState extends State<ReviewListScreen> {
                                       borderRadius: BorderRadius.circular(8),
                                     ),
                                   ),
-                                  child: const Text(
-                                    'Make Review',
-                                    style: TextStyle(
+                                  child: Text(
+                                    hasUserReviewed
+                                        ? 'Already Reviewed'
+                                        : 'Make Review',
+                                    style: const TextStyle(
                                       fontSize: 16,
                                       fontWeight: FontWeight.w600,
                                       color: Colors.white,
@@ -228,12 +229,26 @@ class _ReviewListScreenState extends State<ReviewListScreen> {
                           ),
                         ),
                         const SizedBox(width: 24),
+                        // Reviews List
                         Expanded(
-                          child: Column(
-                            children: reviews
-                                .map((review) => ReviewCard(review: review))
-                                .toList(),
-                          ),
+                          child: reviews.isEmpty
+                              ? const Center(
+                                  child: Padding(
+                                    padding: EdgeInsets.all(32.0),
+                                    child: Text(
+                                      'No reviews yet. Be the first to review!',
+                                      style: TextStyle(
+                                        fontSize: 16,
+                                        color: Colors.grey,
+                                      ),
+                                    ),
+                                  ),
+                                )
+                              : Column(
+                                  children: reviews.map((review) {
+                                    return ReviewCard(review: review);
+                                  }).toList(),
+                                ),
                         ),
                       ],
                     ),

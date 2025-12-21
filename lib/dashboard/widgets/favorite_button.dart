@@ -30,8 +30,8 @@ class _FavoriteButtonState extends State<FavoriteButton> {
 
     try {
       final response = await request.postJson(
-        'http://localhost:8000/dashboard/toggle-favorite/${widget.productId}/',
-        {},
+        'https://rafsanjani41-primebasketplace.pbp.cs.ui.ac.id/dashboard/toggle-favorite/${widget.productId}/',
+        null,
       );
 
       if (response['status'] == 'success') {
@@ -64,6 +64,7 @@ class _FavoriteButtonState extends State<FavoriteButton> {
       style: ElevatedButton.styleFrom(
         backgroundColor: Colors.deepPurple,
         padding: const EdgeInsets.symmetric(vertical: 16),
+        foregroundColor: Colors.white,
       ),
     );
   }

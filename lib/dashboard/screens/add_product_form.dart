@@ -186,11 +186,11 @@ class _AddProductFormPageState extends State<AddProductFormPage> {
 
                     final response = isEdit
                         ? await request.postJson(
-                            "http://localhost:8000/dashboard/update-product/${widget.product!.pk}/",
+                            "https://rafsanjani41-primebasketplace.pbp.cs.ui.ac.id/dashboard/update-product/${widget.product!.pk}/",
                             jsonEncode({"fields": data}),
                           )
                         : await request.postJson(
-                            "http://localhost:8000/dashboard/create-product-flutter/",
+                            "https://rafsanjani41-primebasketplace.pbp.cs.ui.ac.id/dashboard/create-product-flutter/",
                             jsonEncode({"fields": data}),
                           );
 

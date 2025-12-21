@@ -6,7 +6,7 @@ class ProductService {
     int productId,
   ) async {
     final response = await request.postJson(
-      "http://localhost:8000/dashboard/delete-product/$productId/",
+      "https://rafsanjani41-primebasketplace.pbp.cs.ui.ac.id/dashboard/delete-product/$productId/",
       null,
     );
 
