@@ -54,7 +54,11 @@ class _ProductDetailPageState extends State<ProductDetailPage> {
     final request = context.watch<CookieRequest>();
 
     return Scaffold(
-      appBar: AppBar(title: const Text('Detail Produk')),
+      backgroundColor: Color(0xFFF0F0F0),
+      appBar: AppBar(
+        title: const Text('Detail Produk'),
+        backgroundColor: Color(0xFFF0F0F0),
+      ),
       body: FutureBuilder(
         future: fetchProductDetail(request),
         builder: (context, AsyncSnapshot snapshot) {

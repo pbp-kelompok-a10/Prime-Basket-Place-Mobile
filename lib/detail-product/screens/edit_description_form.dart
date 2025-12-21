@@ -34,6 +34,7 @@ class _EditDescriptionFormState extends State<EditDescriptionForm> {
     final request = context.watch<CookieRequest>();
 
     return Scaffold(
+      backgroundColor: Color(0xFFF0F0F0),
       appBar: AppBar(title: const Text('Edit Deskripsi')),
       body: Padding(
         padding: const EdgeInsets.all(16.0),

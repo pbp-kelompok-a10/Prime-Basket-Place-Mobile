@@ -37,7 +37,8 @@ class _PasswordPageState extends State<PasswordPage> {
 
   Future<void> _saveChanges(CookieRequest request) async {
     setState(() => _isLoading = true);
-    const String baseUrl = "https://rafsanjani41-primebasketplace.pbp.cs.ui.ac.id";
+    const String baseUrl =
+        "https://rafsanjani41-primebasketplace.pbp.cs.ui.ac.id"; 
 
     try {
       final response = await request.post("$baseUrl/auth/change-password/", {
@@ -102,9 +103,7 @@ class _PasswordPageState extends State<PasswordPage> {
         selectedIndex: 1,
         onItemSelected: (index) => handleProfileRouting(context, index),
       ),
-      appBar: CustomShopAppBar(
-        onLogoTap: () => Navigator.popUntil(context, (route) => route.isFirst),
-      ),
+      appBar: CustomShopAppBar(),
       body: SingleChildScrollView(
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,

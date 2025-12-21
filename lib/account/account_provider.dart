@@ -6,16 +6,14 @@ import 'package:prime_basket_place_mobile/account/model/account_entry.dart';
 class AccountProvider extends ChangeNotifier {
   UserAccount? account;
 
-  final String baseUrl = 'http://localhost:8000';
+  final String baseUrl = 'https://rafsanjani41-primebasketplace.pbp.cs.ui.ac.id';
 
   Future<bool> logout() async {
     final url = Uri.parse('$baseUrl/auth/logout/');
 
     final response = await http.post(
       url,
-      headers: {
-        'Content-Type': 'application/json',
-      },
+      headers: {'Content-Type': 'application/json'},
     );
 
     if (response.statusCode == 200) {
@@ -26,10 +24,9 @@ class AccountProvider extends ChangeNotifier {
 
     return false;
   }
-   void setAccount(UserAccount account) {
+
+  void setAccount(UserAccount account) {
     this.account = account;
     notifyListeners();
   }
-
 }
-
