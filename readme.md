@@ -188,6 +188,10 @@ https://www.figma.com/site/qtWBlM8sUzHF4jFFDC0jvx/PBP---Prime-Basket-Place?node-
 ## Link Spreadsheet
 https://docs.google.com/spreadsheets/d/1DljS1KXKGSCScvHtpDfTUfxzu5gjLQPvBhaaxFKrGL4/edit?gid=0#gid=0
 
+## Link Mobile 
+[![Build Status](https://app.bitrise.io/app/b9c3bce0-7059-464e-90e1-d98c40a72f04/status.svg?token=kUtFOr7cO-QUmQK04zdI4w&branch=main)](https://app.bitrise.io/app/b9c3bce0-7059-464e-90e1-d98c40a72f04)
+Download aplikasi versi terbaru: [Download APK](https://app.bitrise.io/app/b9c3bce0-7059-464e-90e1-d98c40a72f04/installable-artifacts/d989b5ecf2b6325a/public-install-page/2c9825ff89c5a21cb7ddbb9a495dedea)
+
 ##  Alur Pengintegrasian
 
 1. Setup Awal di Django:
